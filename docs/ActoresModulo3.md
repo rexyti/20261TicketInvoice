@@ -6,7 +6,7 @@
 Supervisa y valida la distribución del recaudo generada por el módulo 3, asegurando que la liquidación se ejecute correctamente según el modelo de negocio configurado.
 
 ### Administrador del Recinto
-Define y consulta las condiciones económicas del recinto (tipo de recinto y porcentaje o tarifa de comisión), las cuales son utilizadas por el módulo 3 para calcular la liquidación correspondiente.
+Consulta las condiciones económicas del recinto (tipo de recinto y porcentaje o tarifa de comisión).
 
 ### Gestión de Recintos e Inventario de Aforo (Módulo 1)
 Proporciona la información sobre los espacios vendidos y su estado dentro del inventario, permitiendo determinar la base de tickets comercializados para la liquidación.
