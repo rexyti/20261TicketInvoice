@@ -34,7 +34,7 @@ Como "gestion de recintos e inventarios de aforo" quiero informar las ventas rea
 
 **Acceptance Scenarios**:
 
-1. **Scenario**: Registro de venta para calculo
+1. **Scenario**: 
    - **Given** Dado que se han vendido tickets para un evento 
    - **When** Cuando la gestion de recintos e inventarios de aforo registre la finalizacion de un evento
    - **Then** Entonces los datos deben ser registrados para calcular la distribucion del recaudo
@@ -55,21 +55,16 @@ Como "gestion de recintos e inventarios de aforo" quiero informar las ventas rea
 
 ## Requirements *(mandatory)*
 
-
+<!--
+  ACTION REQUIRED: The content in this section represents placeholders.
+  Fill them out with the right functional requirements.
+-->
 
 ### Functional Requirements
 
-El sistema debe recibir el consolidado de tickets por estado desde el módulo correspondiente.
 
-El sistema debe validar que la suma de los estados coincida con el total general vendido.
 
-El sistema debe permitir registrar eventos con valores en cero.
 
-El sistema debe impedir la duplicidad de consolidaciones para un mismo evento.
-
-El sistema debe impedir registrar ventas de eventos ya liquidados.
-
-El sistema debe almacenar el consolidado como base para el cálculo de liquidación.
 
 
 ### Key Entities *(include if feature involves data)*
@@ -86,5 +81,8 @@ El sistema debe almacenar el consolidado como base para el cálculo de liquidaci
 
 ### Measurable Outcomes
 
-SC-001: El tiempo de registro y validación del consolidado no debe superar 2 segundos por evento.11
+- **SC-001**: [Measurable metric, e.g., "Users can complete account creation in under 2 minutes"]
+- **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
+- **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
+- **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
 
