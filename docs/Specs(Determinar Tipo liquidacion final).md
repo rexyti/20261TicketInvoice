@@ -49,29 +49,7 @@ Y validar que el sistema registre correctamente el tipo seleccionado.
 
 ---
 
-### User Story 2 - [Informar Ventas] (Priority: P1)
-
-Como "gestion de recintos e inventarios de aforo" quiero informar las ventas realizadas de las entradas para los eventos registrados en la plataforma
-
-**Why this priority**: Es necesario informar las ventas de los tickets, para poder realizar una liquidacion y dispercion correcta de fondos.
-**Independent Test**: Permitir visualizar informacion de ventas realizadas por evento mostrando:
-
--Total de tickets vendidos
-
--Total de tickets validados
-
--Total de tickets cancelados
-
--Total de cortesías
-
-**Acceptance Scenarios**:
-
-1. **Scenario**: Busqueda de las ventas de los tickets de un evento
-   - **Given** Dado que se han vendido tickets para un evento 
-   - **When** Cuando la gestion de recintos e inventarios de aforo registre las ventas de un evento 
-   - **Then** Entonces los datos deben ser visibles para el administrador financiero
-
----
+#
 
 [Add more user stories as needed, each with an assigned priority]
 
@@ -98,23 +76,19 @@ Como "gestion de recintos e inventarios de aforo" quiero informar las ventas rea
 -**FR-002**: El sistema MUST permitir configurar porcentaje de comisión por recinto
 
 
--**FR-003**: El sistema MUST calcular el total bruto de ventas confirmadas
--**FR-004**: El sistema MUST descontar tickets cancelados del total bruto
--**FR-005**: El sistema MUST aplicar la matriz de liquidación según estado del ticket
-
-
--**FR-006**: El sistema MUST calcular comisión de recinto
--**FR-007**: El sistema MUST calcular monto final al promotor
--**FR-008**: El sistema MUST almacenar el resultado de la liquidación
--**FR-009**: El sistema MUST impedir liquidación duplicada sin control de versión
--**FR-010**: El sistema MUST permitir consultar liquidaciones históricas
-
 
 
 ### Key Entities *(include if feature involves data)*
 
-- **[Entity 1]**: [What it represents, key attributes without implementation]
-- **[Entity 2]**: [What it represents, relationships to other entities]
+- **[Entity 1]**: evento
+  -idEvento
+  -tipoLiquidacion
+
+- **[Entity 2]**: Recinto
+  -idRecinto
+  -tipo
+  -porcentajeComision
+
 
 ## Success Criteria *(mandatory)*
 
@@ -125,8 +99,7 @@ Como "gestion de recintos e inventarios de aforo" quiero informar las ventas rea
 
 ### Measurable Outcomes
 
-- **SC-001**: [Measurable metric, e.g., "Users can complete account creation in under 2 minutes"]
-- **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
-- **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
-- **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
+- **SC-001**: 100% de eventos configurados pueden ser liquidados sin error"
+
+- **SC-002**: 100% de liquidaciones para recintos deben tener un tipo asignado "
 
