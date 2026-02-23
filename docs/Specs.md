@@ -1,26 +1,3 @@
-Historia de Usuario 1 [Informar Ventas] (Prioridad: P1):
-Como administrador financiero, quiero el equipo de Gestión de Recintos e Inventario de Aforo sea capaz de 
-
-**Historia de Usuario 2 [Determinar tipo de liquidacion final] (Prioridad: P1):**
-Como administrador financiero, quiero poder registrar el tipo de liquidacion final que se va a usar para pagar los eventos donde se realizara , para que el sistema aplique el modelo correcto de calculo.
-
-**WHY THIS PRIORITY**
-Los modelos de liquidacion definido no se puede establecer el valor de a comision del recinto en el sistema.
-
-**INDEPENDENT TEST**
-Configurar un recinto con:
-- Tarifa plana
-- -Reparto de ingesos
-
-Y validar que el sistema registre correctamente el tipo seleccionado.
-
-**ACCEPTANCE SCENARIOS**
-
-Escenario 1: Configuracion de tarifa plana:
-**Dado** que existe un evento asociado a un recinto.
-**Cuando** el administrador financiero selecciona "Tarifa Plana" define un monto fijo.
-**Entonces** el sistema guarda el modelo financiero asociado al evento.
-
 # Feature Specification: Feature
 
 **Created**: [21/02/2026]  
@@ -44,7 +21,7 @@ Escenario 1: Configuracion de tarifa plana:
 
 Como administrador financiero, quiero poder registrar el tipo de liquidacion final que se va a usar para pagar los eventos donde se realizara , para que el sistema aplique el modelo correcto de calculo.
 
-**Why this priority**: Es necesario definir los modelos de liquidacion, ya que sin estos no se puede establecer el valor de la comision de los recintos en el sistema.
+**Why this priority**: Es necesario definir los modelos de liquidacion, para establecer el valor de la comision de los recintos en el sistema.
 
 **Independent Test**: 
 Configurar un recinto con:
@@ -63,29 +40,36 @@ Y validar que el sistema registre correctamente el tipo seleccionado.
 2. **Scenario**: Configuracion de reparto de ingresos
    - **Given** Dado que existe un evento asociado a un recinto.
    - **When** Cuando el administrador financiero selecciona "reparto de ingresos" define un porcentaje sobre la venta bruta.
-   - **Then** [expected outcome]
+   - **Then** Entonces el sistema guarda el modelo financiero asociado al evento.
 
-3. **Scenario**: [Escenario Borde]
-   - **Given** [initial state]
-   - **When** [action]
-   - **Then** [expected outcome]
+3. **Scenario**: Configuracion de tipo de tarifa cuando el recinto no existe
+   - **Given** Dado que no existe el recinto.
+   - **When** Cuando el administrador financiero vaya a seleccionar una opcion
+   - **Then** Lanzar un mensaje de error "el recinto al que se quiere asociar la tarifa no existe"
 
 ---
 
-### User Story 2 - [Brief Title] (Priority: P2)
+### User Story 2 - [Informar Ventas] (Priority: P1)
 
-[Describe this user journey in plain language]
+Como "gestion de recintos e inventarios de aforo" quiero informar las ventas realizadas de las entradas para los eventos registrados en la plataforma
 
-**Why this priority**: [Explain the value and why it has this priority level]
+**Why this priority**: Es necesario informar las ventas de los tickets, para poder realizar una liquidacion y dispercion correcta de fondos.
+**Independent Test**: Permitir visualizar informacion de ventas realizadas por evento mostrando:
 
-**Independent Test**: [Describe how this can be tested independently]
+-Total de tickets vendidos
+
+-Total de tickets validados
+
+-Total de tickets cancelados
+
+-Total de cortesías
 
 **Acceptance Scenarios**:
 
-1. **Scenario**: [Descriptive scenario name]
-   - **Given** [initial state]
-   - **When** [action]
-   - **Then** [expected outcome]
+1. **Scenario**: Busqueda de las ventas de los tickets de un evento
+   - **Given** Dado que se han vendido tickets para un evento 
+   - **When** Cuando la gestion de recintos e inventarios de aforo registre las ventas de un evento 
+   - **Then** Entonces los datos deben ser visibles para el administrador financiero
 
 ---
 
@@ -110,16 +94,22 @@ Y validar que el sistema registre correctamente el tipo seleccionado.
 
 ### Functional Requirements
 
-- **FR-001**: System MUST [specific capability, e.g., "allow users to create accounts"]
-- **FR-002**: System MUST [specific capability, e.g., "validate email addresses"]  
-- **FR-003**: Users MUST be able to [key interaction, e.g., "reset their password"]
-- **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
-- **FR-005**: System MUST [behavior, e.g., "log all security events"]
+-**FR-001**: El sistema MUST permitir configurar el tipo de liquidación por evento
+-**FR-002**: El sistema MUST permitir configurar porcentaje de comisión por recinto
 
-*Example of marking unclear requirements:*
 
-- **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
-- **FR-007**: System MUST retain user data for [NEEDS CLARIFICATION: retention period not specified]
+-**FR-003**: El sistema MUST calcular el total bruto de ventas confirmadas
+-**FR-004**: El sistema MUST descontar tickets cancelados del total bruto
+-**FR-005**: El sistema MUST aplicar la matriz de liquidación según estado del ticket
+
+
+-**FR-006**: El sistema MUST calcular comisión de recinto
+-**FR-007**: El sistema MUST calcular monto final al promotor
+-**FR-008**: El sistema MUST almacenar el resultado de la liquidación
+-**FR-009**: El sistema MUST impedir liquidación duplicada sin control de versión
+-**FR-010**: El sistema MUST permitir consultar liquidaciones históricas
+
+
 
 ### Key Entities *(include if feature involves data)*
 
