@@ -69,6 +69,7 @@ Y validar que el sistema registre correctamente el tipo seleccionado.
 ### Functional Requirements
 
 -**FR-001**: El sistema MUST permitir configurar el tipo de liquidación por evento
+
 -**FR-002**: El sistema MUST permitir configurar porcentaje de comisión por recinto
 
 
@@ -77,12 +78,17 @@ Y validar que el sistema registre correctamente el tipo seleccionado.
 ### Key Entities *(include if feature involves data)*
 
 - **[Entity 1]**: evento
+
   -idEvento
+
   -tipoLiquidacion
 
 - **[Entity 2]**: Recinto
+
   -idRecinto
+
   -tipo
+
   -porcentajeComision
 
 
