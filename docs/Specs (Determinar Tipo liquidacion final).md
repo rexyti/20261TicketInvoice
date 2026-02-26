@@ -77,7 +77,7 @@ Y validar que el sistema registre correctamente el tipo seleccionado.
 
 ### Key Entities *(include if feature involves data)*
 
-- **[Entity 1]**: evento
+- **[Entity 1]**: Evento
 
   -idEvento
 
