@@ -52,12 +52,8 @@ Y validar que el sistema registre correctamente el tipo seleccionado.
 
 ### Edge Cases
 
-3. **Scenario**: Configuracion de tipo de tarifa cuando el recinto no existe
-   - **Given** Dado que no existe el recinto.
-   - **When** Cuando el administrador financiero vaya a seleccionar una opcion
-   - **Then** Lanzar un mensaje de error "el recinto al que se quiere asociar la tarifa no existe"
-- What happens when [boundary condition]?
-- How does system handle [error scenario]?
+¿Que pasa cuando se configura el tipo de tarifa cuando el recinto no existe?
+Dado que el recinto no exite, lanzar un mensaje de error al momento de seleccionar una opcion.
 
 ## Requirements *(mandatory)*
 
