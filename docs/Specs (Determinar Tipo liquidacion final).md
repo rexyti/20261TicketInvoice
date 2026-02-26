@@ -53,6 +53,7 @@ Y validar que el sistema registre correctamente el tipo seleccionado.
 ### Edge Cases
 
 ¿Que pasa cuando se configura el tipo de tarifa cuando el recinto no existe?
+
 Dado que el recinto no exite, lanzar un mensaje de error al momento de seleccionar una opcion.
 
 ## Requirements *(mandatory)*
