@@ -82,7 +82,7 @@ Como "gestion de recintos e inventarios de aforo" quiero informar las ventas rea
 ### Key Entities *(include if feature involves data)*
 
 - **[Entity 1]**: **Evento**
-- 
+
 Representa un evento registrado en la plataforma.
 
 **Atributos clave**:
