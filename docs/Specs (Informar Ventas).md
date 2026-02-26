@@ -62,14 +62,20 @@ Como "gestion de recintos e inventarios de aforo" quiero informar las ventas rea
 
 ### Functional Requirements
 
-
+-**FR-001**:El sistema DEBE permitir registrar y consolidar automáticamente las ventas por evento.
+-**FR-002**:El sistema DEBE calcular y mostrar: Total de tickets vendidos, Total de tickets validados, Total de tickets cancelados y Total de recaudo bruto
+-**FR-003**:El sistema DEBE permitir marcar un evento como “Finalizado”.
+-**FR-004**:El sistema DEBE bloquear la modificación de datos de ventas una vez el evento haya sido liquidado.
+-**FR-005**:El sistema DEBE validar que el evento exista antes de permitir registrar su finalización.
+-**FR-006**:El sistema DEBE permitir consultar el resumen de ventas por evento despues de que dicho evento haya finalizado.
+-**FR-007**:El sistema DEBE calcular el recaudo bruto excluyendo tickets cancelados.
 
 
 
 
 ### Key Entities *(include if feature involves data)*
 
-- **[Entity 1]**: [What it represents, key attributes without implementation]
+- **[Eventos]**: [What it represents, key attributes without implementation]
 - **[Entity 2]**: [What it represents, relationships to other entities]
 
 ## Success Criteria *(mandatory)*
