@@ -62,64 +62,32 @@ Como "gestion de recintos e inventarios de aforo" quiero informar las ventas rea
 
 ### Functional Requirements
 
--**FR-001**:El sistema DEBE permitir registrar y consolidar automáticamente las ventas por evento.
+**FR-001**: El sistema debe permitir registrar y consolidar automaticamente las ventas por evento.
 
--**FR-002**:El sistema DEBE calcular y mostrar: Total de tickets vendidos, Total de tickets validados, Total de tickets cancelados y Total de recaudo bruto
+**FR-002**: El sistema debe calcular y mostrar:
+-Total de tickets vendidos
+-Total de tickets validados
+-Total de tickets cancelados
+-Total de recaudo bruto
 
--**FR-003**:El sistema DEBE permitir marcar un evento como “Finalizado”.
-
--**FR-004**:El sistema DEBE bloquear la modificación de datos de ventas una vez el evento haya sido liquidado.
-
--**FR-005**:El sistema DEBE validar que el evento exista antes de permitir registrar su finalización.
-
--**FR-006**:El sistema DEBE permitir consultar el resumen de ventas por evento despues de que dicho evento haya finalizado.
-
--**FR-007**:El sistema DEBE calcular el recaudo bruto excluyendo tickets cancelados.
+*FR-003*
+El sistema DEBE permitir marcar un evento como “Finalizado”.
+FR-004
+El sistema DEBE bloquear la modificación de datos de ventas una vez el evento haya sido liquidado.
+FR-005
+El sistema DEBE validar que el evento exista antes de permitir registrar su finalización.
+FR-006
+El sistema DEBE permitir consultar el resumen de ventas por evento despues de que dicho evento haya finalizado.
+FR-007
+El sistema DEBE calcular el recaudo bruto excluyendo tickets cancelados.
 
 
 
 
 ### Key Entities *(include if feature involves data)*
 
-- **[Entity 1]**: **Evento**
-Representa un evento registrado en la plataforma.
-
-**Atributos clave**:
-
-- idEvento
-  
-- nombreEvento
-  
-- estadoEvento (Programado / En curso / Finalizado / Liquidado)
-  
-- fechaEvento
-  
-- totalRecaudoBruto
-  
-**Relación**:
-- Un evento tiene muchos tickets.
-  
-- Un evento pertenece a un recinto.
-
-  **[Entity 2]**: **Ticket**
-  
-Representa una entrada asociada a un evento.
-
-**Atributos clave**:
-
-idTicket
-
-idEvento (FK)
-
-estadoTicket (Vendido / Validado / Cancelado / Cortesía)
-
-valorTicket
-
-fechaVenta
-
-**Relación**:
-
-Muchos tickets pertenecen a un evento.
+- **[Entity 1]**: [What it represents, key attributes without implementation]
+- **[Entity 2]**: [What it represents, relationships to other entities]
 
 ## Success Criteria *(mandatory)*
 
@@ -130,5 +98,8 @@ Muchos tickets pertenecen a un evento.
 
 ### Measurable Outcomes
 
-- **SC-001**: **(Metrica operativa)** El 100 % de los eventos finalizados generan automáticamente un resumen de ventas sin errores de cálculo.
-- **SC-002**: **(Metrica de rendimiento)** El sistema debe procesar y consolidar hasta 50.000 tickets por evento en menos de 5 segundos.
+- **SC-001**: [Measurable metric, e.g., "Users can complete account creation in under 2 minutes"]
+- **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
+- **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
+- **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
+
