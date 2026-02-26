@@ -75,8 +75,27 @@ Como "gestion de recintos e inventarios de aforo" quiero informar las ventas rea
 
 ### Key Entities *(include if feature involves data)*
 
-- **[Eventos]**: [What it represents, key attributes without implementation]
-- **[Entity 2]**: [What it represents, relationships to other entities]
+- **[Entity 1]**: **Evento**
+Representa un evento registrado en la plataforma.
+**Atributos clave**:
+- idEvento
+- nombreEvento
+- estadoEvento (Programado / En curso / Finalizado / Liquidado)
+- fechaEvento
+- totalRecaudoBruto
+**Relación**:
+- Un evento tiene muchos tickets.
+- Un evento pertenece a un recinto.
+- **[Entity 2]**: **Ticket**
+Representa una entrada asociada a un evento.
+**Atributos clave**:
+idTicket
+idEvento (FK)
+estadoTicket (Vendido / Validado / Cancelado / Cortesía)
+valorTicket
+fechaVenta
+**Relación**:
+Muchos tickets pertenecen a un evento.
 
 ## Success Criteria *(mandatory)*
 
@@ -87,8 +106,5 @@ Como "gestion de recintos e inventarios de aforo" quiero informar las ventas rea
 
 ### Measurable Outcomes
 
-- **SC-001**: [Measurable metric, e.g., "Users can complete account creation in under 2 minutes"]
-- **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
-- **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
-- **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
-
+- **SC-001**: **(Metrica operativa)** El 100 % de los eventos finalizados generan automáticamente un resumen de ventas sin errores de cálculo.
+- **SC-002**: **(Metrica de rendimiento)** El sistema debe procesar y consolidar hasta 50.000 tickets por evento en menos de 5 segundos.
