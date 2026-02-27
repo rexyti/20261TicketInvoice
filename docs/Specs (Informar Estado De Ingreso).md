@@ -36,15 +36,20 @@ Como "Operacion de eventos y control de accesos" quiero informar el estado de in
    - **When** Cuando la condicion del ticket es "validado"
    - **Then** Entonces el monto a dispersar del pago final se distribuye en 90% al promotor, 10% a la comision de la plataforma y como observacion: "Servcio Completado"
 
-1. **Scenario**: Condicion de ticket "Vendido(No Asistio)"
+2. **Scenario**: Condicion de ticket "Vendido(No Asistio)"
    - **Given** Dado que se vendio un ticket 
    - **When** Cuando la condicion del ticket es "Vendido(No asistio)"
    - **Then** Entonces el monto a dispersar del pago final se distribuye en 100% al promotor, 10% a la comision de la plataforma y como observacion: "El ingreso se mantiene; menor gasto operativo"
 
-   1. **Scenario**: Condicion de ticket "Cortesia(Free Pass)"
+3. **Scenario**: Condicion de ticket "Cortesia(Free Pass)"
    - **Given** Dado que se vendio un ticket 
    - **When** Cuando la condicion del ticket es "Cortesia(Free Pass)"
    - **Then** Entonces el monto a dispersar del pago final se distribuye en 0% al promotor, Tarifa Fija a la comision de la plataforma y como observacion: "Costo operativo por emisión de ticket."
+  
+4. **Scenario**: Condicion de ticket "Cortesia(Free Pass)"
+   - **Given** Dado que se vendio un ticket 
+   - **When** Cuando la condicion del ticket es "Cancelada"
+   - **Then** Entonces el monto a dispersar del pago final se distribuye en -100% al promotor, 0% la comision de la plataforma y como observacion: "Costo operativo por emisión de ticket."
 
 
 ---
