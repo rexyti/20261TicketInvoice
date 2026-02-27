@@ -70,16 +70,19 @@ Como "gestion de recintos e inventarios de aforo" quiero informar las ventas rea
 -Total de tickets cancelados
 -Total de recaudo bruto
 
-*FR-003*
-El sistema DEBE permitir marcar un evento como “Finalizado”.
-FR-004
-El sistema DEBE bloquear la modificación de datos de ventas una vez el evento haya sido liquidado.
-FR-005
-El sistema DEBE validar que el evento exista antes de permitir registrar su finalización.
-FR-006
-El sistema DEBE permitir consultar el resumen de ventas por evento despues de que dicho evento haya finalizado.
-FR-007
-El sistema DEBE calcular el recaudo bruto excluyendo tickets cancelados.
+**FR-003**El sistema DEBE permitir marcar un evento como “Finalizado”.
+
+
+**FR-004**El sistema DEBE bloquear la modificación de datos de ventas una vez el evento haya sido liquidado.
+
+
+**FR-005**El sistema DEBE validar que el evento exista antes de permitir registrar su finalización.
+
+
+**FR-006**El sistema DEBE permitir consultar el resumen de ventas por evento despues de que dicho evento haya finalizado.
+
+
+**FR-007**El sistema DEBE calcular el recaudo bruto excluyendo tickets cancelados.
 
 
 
