@@ -89,8 +89,36 @@ Como "gestion de recintos e inventarios de aforo" quiero informar las ventas rea
 
 ### Key Entities *(include if feature involves data)*
 
-- **[Entity 1]**: [What it represents, key attributes without implementation]
-- **[Entity 2]**: [What it represents, relationships to other entities]
+- **[Entity 1]**:
+**Evento**
+
+
+Atributos:
+
+idEvento
+
+estadoEvento (Programado / EnCurso / Finalizado / Liquidado)
+
+tipoLiquidacion (TarifaPlana / RepartoIngresos)
+
+totalRecaudoBruto
+
+totalComisionPlataforma
+
+totalPagoPromotor
+
+
+- **[Entity 2]**: Ticket
+
+idTicket  
+idEvento  
+estadoFinanciero (Validado / NoAsistio / Cortesia / Cancelado)  
+valorBruto  
+fechaVenta  
+
+Relaciones:  
+Pertenece a un evento.  
+Su estado impacta el calculo financiero del recaudo.
 
 ## Success Criteria *(mandatory)*
 
