@@ -33,6 +33,8 @@ al promotor, recinto y plataforma según la configuración establecida.
 
 -Determinar el valor de las  comisiones acordadas para el evento.
 
+-Estado de la liquidacion del evento
+
 **Acceptance Scenarios**:
 
 1. **Scenario**: Condicion cuando el recinto es de tipo teatro
@@ -49,6 +51,8 @@ al promotor, recinto y plataforma según la configuración establecida.
               - Calcular el valor de las  comisiones acordadas para el evento.
 
               - Registrar el resultado  como “Total distribuible”.
+
+              - Registrar el estado de la liquidacion del evento
 
 
 ### Edge Cases
@@ -75,23 +79,25 @@ Se bloquea el cálculo y se solicita establecer comisión.
 
 ### Functional Requirements
 
-**FR-01:**El sistema debe permitir calcular automáticamente el recaudo total bruto del evento.
+-**FR-01:** El sistema debe permitir calcular automáticamente el recaudo total bruto del evento.
 
-**FR-02:**El sistema debe descontar:
+-**FR-02:** El sistema debe descontar:
           
           -Tickets cancelados
 
           -Cortesías (si no generan ingreso)
 
-**FR-03:**El sistema debe generar:
+-**FR-03:** El sistema debe generar:
 
           -Valor neto preliminar
 
           -Total distribuible
 
-**FR-04:**El sistema debe almacenar el cálculo como registro financiero del evento.
+-**FR-04:** El sistema debe almacenar el cálculo como registro financiero del evento.
 
-**FR-05:**El sistema debe permitir consultar la distribución calculada (relacionado con “Consultar distribución del recaudo”).
+-**FR-05:** El sistema debe permitir consultar la distribución calculada (relacionado con “Consultar distribución del recaudo”).
+
+-**FR-06:** El sistema debe registrar el estado de la liquidacion del evento dentro de la distribucion del recaudo.
 
 
 
@@ -121,10 +127,10 @@ Atributos:
 
 ### Measurable Outcomes
 
-**SC-001:**El 100 % de los eventos finalizados deben permitir calcular distribución sin intervención manual cuando los datos estén completos.
+**SC-001:** El 100 % de los eventos finalizados deben permitir calcular distribución sin intervención manual cuando los datos estén completos.
 
-**SC-002:**El cálculo debe ejecutarse en menos de 1 minuto y 52 segundos para eventos con hasta 500 tickets vendidos.
+**SC-002:** El cálculo debe ejecutarse en menos de 1 minuto y 52 segundos para eventos con hasta 500 tickets vendidos.
 
-**SC-003:**El 95 % de los cálculos no deben requerir corrección posterior por inconsistencias.
+**SC-003:** El 95 % de los cálculos no deben requerir corrección posterior por inconsistencias.
 
 
