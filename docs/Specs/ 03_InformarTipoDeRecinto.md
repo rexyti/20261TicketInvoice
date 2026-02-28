@@ -50,7 +50,7 @@ Como "Gestion de recintos e inventarios de aforo" quiero informar los tipos de r
 
 Se manda un mesaje de "Error diciendo no tiene tipo de recinto asignado.
 
--Que pasaria si se le quiere cambiar el tipo a un recinto ya existe?
+-Que pasaria si se le quiere cambiar el tipo a un recinto ya existente?
 
 Se bloquea la operacion y se piden permisos de administrador del sistema.
 
