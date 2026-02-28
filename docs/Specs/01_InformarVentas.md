@@ -129,7 +129,6 @@ Su estado impacta el calculo financiero del recaudo.
 
 ### Measurable Outcomes
 
-- **SC-001**: [Measurable metric, e.g., "Users can complete account creation in under 2 minutes"]
-- **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
-- **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
-- **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
+- **SC-001**: El 100% de la informacion de ventas recibida debe ser procesada correctamente para eventos validos.
+- **SC-002**: El sistema debe rechazar el 100% de informacion de ventas correspondiente a eventos inexistentes o liquidados.
+- **SC-003**: El 100% de los eventos liquidables deben tener informacion de ventas disponible para el calculo financiero.
