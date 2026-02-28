@@ -129,6 +129,4 @@ Su estado impacta el calculo financiero del recaudo.
 
 ### Measurable Outcomes
 
-- **SC-001**: El 100% de la informacion de ventas recibida debe ser procesada correctamente para eventos validos.
-- **SC-002**: El sistema debe rechazar el 100% de informacion de ventas correspondiente a eventos inexistentes o liquidados.
-- **SC-003**: El 100% de los eventos liquidables deben tener informacion de ventas disponible para el calculo financiero.
+- **SC-001**: El 100% de los eventos liquidables deben tener informacion de ventas disponible para el calculo financiero.
