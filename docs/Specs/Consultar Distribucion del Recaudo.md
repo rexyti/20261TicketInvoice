@@ -41,11 +41,12 @@ Como administrador financiero quiero consultar la distribucion del recaudo gener
   Fill them out with the right edge cases.
 -->
 
-**-**Que pasa cuando se intenta consultar la distribucion de un evento que no existe?
+-Que pasa cuando se intenta consultar la distribucion de un evento que no existe?
 
 Se muestra un mensaje de error indicando que el evento no se encuentra registrado.
 
 -Que pasa si la liquidacion presenta inconsistencias en los montos calculados?
+
 El sistema debe bloquear la consulta y notificar al administrador financiero para revision.
 
 ## Requirements *(mandatory)*
