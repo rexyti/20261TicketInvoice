@@ -83,5 +83,4 @@ totalRecaudoBruto
 
 ### Measurable Outcomes
 
-- **SC-001**: El 100% de las consultas de ingresos deben reflejar correctamente los datos registrados de venta de tickets.
-- **SC-003**: El 100% de los eventos con tickets vendidos deben tener informacion de ingresos disponible para consulta.
+- **SC-001**: El 100% de los eventos con tickets vendidos deben tener informacion de ingresos disponible para consulta.
