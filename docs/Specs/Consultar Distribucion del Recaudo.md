@@ -16,8 +16,6 @@ Como administrador financiero quiero consultar la distribucion del recaudo gener
 
 -Total comisión plataforma
 
--Total reembolsos generados
-
 -Estado de la liquidacion del evento
 
 **Acceptance Scenarios**:
@@ -25,7 +23,7 @@ Como administrador financiero quiero consultar la distribucion del recaudo gener
 1. **Scenario**: Consulta de distribucion del recaudo de un evento liquidado
    - **Given** Dado que un evento se encuentra en estado "Liquidado"
    - **When** Cuando el administrador financiero consulta la distribucion del recaudo del evento
-   - **Then** Entonces el sistema muestra el detalle de los montos distribuidos al promotor, comision de plataforma y reembolsos correspondientes
+   - **Then** Entonces el sistema muestra el detalle de los montos distribuidos al promotor, comision de plataforma.
 
 2. **Scenario**: Consulta de distribucion de un evento no liquidado
    - **Given** Dado que un evento no ha sido liquidado
@@ -59,7 +57,7 @@ El sistema debe bloquear la consulta y notificar al administrador financiero par
 ### Functional Requirements
 
 - **FR-001**: El sistema DEBE permitir consultar la distribucion del recaudo por evento.
-- **FR-002**: El sistema DEBE mostrar el detalle de montos distribuidos al promotor, comision de plataforma y reembolsos.
+- **FR-002**: El sistema DEBE mostrar el detalle de montos distribuidos al promotor, comision de plataforma.
 - **FR-003**: El sistema DEBE validar que el evento exista antes de permitir la consulta.
 - **FR-004**: El sistema DEBE permitir la consulta solo cuando el evento tenga estado "Liquidado".
 - **FR-006**: El sistema DEBE impedir modificaciones sobre los datos de distribucion una vez consultados.
