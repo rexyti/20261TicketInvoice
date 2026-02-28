@@ -65,9 +65,9 @@ Dado que el recinto no exite, lanzar un mensaje de error al momento de seleccion
 
 ### Functional Requirements
 
--**FR-001**: El sistema MUST permitir configurar el tipo de liquidación por evento
+-**FR-001**: El sistema DEBE permitir configurar el tipo de liquidación por evento
 
--**FR-002**: El sistema MUST permitir configurar porcentaje de comisión por recinto
+-**FR-002**: El sistema DEBE permitir configurar porcentaje de comisión por recinto
 
 
 
