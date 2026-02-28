@@ -54,7 +54,7 @@ Y validar que el sistema registre correctamente el tipo seleccionado.
 
 ¿Que pasa cuando se configura el tipo de tarifa cuando el recinto no existe?
 
-Dado que el recinto no exite, lanzar un mensaje de error al momento de seleccionar una opcion.
+Dado que el recinto no exite, lanzar un mensaje de error al momento de seleccionar una opcion diciendo: "Error, no se puede asignar un tipo a un recinto no existente".
 
 ## Requirements *(mandatory)*
 
