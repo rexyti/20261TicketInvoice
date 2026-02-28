@@ -1,4 +1,4 @@
-# Feature Specification: [FEATURE NAME]
+# Feature Specification: [FEATURE]
 
 **Created**: [DATE]  
 
