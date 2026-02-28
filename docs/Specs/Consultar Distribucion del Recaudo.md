@@ -80,13 +80,6 @@ El sistema debe bloquear la consulta y notificar al administrador financiero par
 -fechaLiquidacion
 
 
-- **[Entity 2]**: Evento
-
--idEvento
-
--estadoEvento (Programado / EnCurso / Finalizado / Liquidado)
-
-## Success Criteria *(mandatory)*
 
 
 ### Measurable Outcomes
