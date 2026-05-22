@@ -51,13 +51,30 @@ http://localhost:8080/api/v1/eventos/1/distribucion-recaudo
 ### Feature 9 - Consultar distribucion del recaudo (GET)
 http://localhost:8080/api/v1/eventos/1/distribucion-recaudo
 
-## 4) Apagar contenedores
+## 4) Abrir Swagger UI
+URL principal:
+http://localhost:8080/swagger-ui.html
+
+JSON OpenAPI:
+http://localhost:8080/api-docs
+
+## 5) Apagar contenedores
 ```bash
 docker compose down
 ```
 
-## 5) Reinicio limpio (si hay problemas con datos)
+## 6) Reinicio limpio (si hay problemas con datos)
 ```bash
 docker compose down -v
 docker compose up --build
 ```
+
+## 7) Ejecutar frontend
+```bash
+cd front
+npm install     //solo si no se a instalado//
+npm run dev
+```
+
+Abrir en navegador:
+http://localhost:5173

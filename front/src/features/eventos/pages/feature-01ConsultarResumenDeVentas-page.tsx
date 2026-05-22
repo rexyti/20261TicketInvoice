@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { CheckCircle2, ChevronDown, Download, Search } from "lucide-react";
 import { Button } from "@/shared/ui/button";
+import { BackendNotConnectedModal } from "@/shared/ui/backend-not-connected-modal";
 
 interface RowResumen {
   condicion: string;
@@ -36,6 +38,8 @@ interface Feature01ConsultarResumenDeVentasPageProps {
 }
 
 export function Feature01ConsultarResumenDeVentasPage({ onBack, evento, resumen }: Feature01ConsultarResumenDeVentasPageProps) {
+  const [showNotConnectedModal, setShowNotConnectedModal] = useState(false);
+
   return (
     <div className="pb-10 [zoom:0.64]">
       <section className="bg-[#c9c4da] px-8 md:px-12 py-6">
@@ -46,12 +50,15 @@ export function Feature01ConsultarResumenDeVentasPage({ onBack, evento, resumen 
           </label>
           <div>
             <p className="text-lg text-[#6f6990] font-semibold mb-2">Origen del resumen</p>
-            <button className="w-full h-14 rounded-xl bg-[#ece9f5] px-5 text-xl text-left text-[#211c34] flex items-center justify-between">
+            <button
+              className="w-full h-14 rounded-xl bg-[#ece9f5] px-5 text-xl text-left text-[#211c34] flex items-center justify-between"
+              onClick={() => setShowNotConnectedModal(true)}
+            >
               Snapshot de evento
               <ChevronDown className="w-6 h-6" />
             </button>
           </div>
-          <Button className="h-14 px-7 rounded-xl bg-[#6351a0] text-[#f2effa] text-xl font-semibold">
+          <Button className="h-14 px-7 rounded-xl bg-[#6351a0] text-[#f2effa] text-xl font-semibold" onClick={() => setShowNotConnectedModal(true)}>
             <Download className="w-6 h-6" />
             Exportar Resumen
           </Button>
@@ -133,6 +140,12 @@ export function Feature01ConsultarResumenDeVentasPage({ onBack, evento, resumen 
           </table>
         </div>
       </section>
+
+      <BackendNotConnectedModal
+        open={showNotConnectedModal}
+        onClose={() => setShowNotConnectedModal(false)}
+        onGoMenu={onBack}
+      />
     </div>
   );
 }
