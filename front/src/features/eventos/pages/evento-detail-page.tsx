@@ -8,6 +8,7 @@ import { ResumenVentasCard } from "../components/resumen-ventas-card";
 import { EstadoIngresoTable } from "../components/estado-ingreso-table";
 import { IngresosTicketsTable } from "../components/ingresos-tickets-table";
 import type { EventoListItem } from "../api/eventos.api";
+import { Feature08CalcularDistribucionDelRecaudoPage, type CalculoDistribucionData } from "./feature-08CalcularDistribucionDelRecaudo-page";
 
 interface EventoDetailPageProps {
   evento: EventoListItem;
@@ -16,6 +17,44 @@ interface EventoDetailPageProps {
 
 export function EventoDetailPage({ evento, onBack }: EventoDetailPageProps) {
   const [currentStep, setCurrentStep] = useState<StepType>(1);
+  const [showFeature08, setShowFeature08] = useState(false);
+  
+  const distribucionPreview: CalculoDistribucionData = resumenData
+    ? {
+        calculoId: `preview-${evento.id}`,
+        fechaCalculo: new Date().toLocaleDateString(),
+        estadoLiquidacion: "PRELIMINAR",
+        metricas: {
+          totalBruto: String((resumenData as any)?.totalRecaudoBruto ?? "$0"),
+          ticketsCancelados: String((resumenData as any)?.totalTicketsCancelados ?? 0),
+          cortesias: String((resumenData as any)?.totalTicketsCortesia ?? 0),
+          totalNetoPreliminar: String((resumenData as any)?.totalRecaudoBruto ?? "$0"),
+          comisionPlataforma: "$0",
+          comisionRecinto: "$0",
+          totalDistribuible: String((resumenData as any)?.totalRecaudoBruto ?? "$0"),
+          pagaPromotor: String((resumenData as any)?.totalRecaudoBruto ?? "$0"),
+        },
+        rows: [],
+        puedeCalcular: true,
+      }
+    : {
+        calculoId: `preview-${evento.id}`,
+        fechaCalculo: new Date().toLocaleDateString(),
+        estadoLiquidacion: "SIN_DATOS",
+        metricas: {
+          totalBruto: "$0",
+          ticketsCancelados: "0",
+          cortesias: "0",
+          totalNetoPreliminar: "$0",
+          comisionPlataforma: "$0",
+          comisionRecinto: "$0",
+          totalDistribuible: "$0",
+          pagaPromotor: "$0",
+        },
+        rows: [],
+        puedeCalcular: false,
+        razonBloqueo: "Resumen de ventas no disponible",
+      };
 
   const { data: resumenData, isLoading: resumenLoading, error: resumenError } = useResumenVentas(evento.id);
   const { data: estadoData, isLoading: estadoLoading, error: estadoError } = useEstadoIngreso(evento.id);
@@ -106,8 +145,13 @@ export function EventoDetailPage({ evento, onBack }: EventoDetailPageProps) {
               <p className="text-gray-600">Calcular y consultar la distribución final del recaudo</p>
             </div>
             <div className="bg-pink-50 border border-pink-200 rounded-xl p-8 text-center">
-              <p className="text-pink-700 font-semibold">Funcionalidad en desarrollo</p>
-              <p className="text-sm text-pink-600 mt-2">Este paso permitirá calcular y consultar la distribución del recaudo</p>
+              <p className="text-pink-700 font-semibold">Funcionalidad disponible</p>
+              <p className="text-sm text-pink-600 mt-2">Abra la calculadora de distribución para el evento</p>
+              <div className="mt-4">
+                <Button onClick={() => setShowFeature08(true)} className="inline-flex items-center gap-2 bg-pink-600 text-white">
+                  Abrir calculadora de distribución
+                </Button>
+              </div>
             </div>
           </div>
         );
@@ -152,6 +196,18 @@ export function EventoDetailPage({ evento, onBack }: EventoDetailPageProps) {
 
       {/* Steps Navigator */}
       <StepsNavigator currentStep={currentStep} onStepChange={setCurrentStep} />
+
+      {showFeature08 && (
+        <div className="fixed inset-0 z-50 bg-black/30 flex items-start justify-center p-6">
+          <div className="w-full max-w-[1280px]">
+            <Feature08CalcularDistribucionDelRecaudoPage
+              onBack={() => setShowFeature08(false)}
+              evento={{ id: String(evento.id), nombre: evento.nombre, recintoTipo: "Teatro" }}
+              distribucion={distribucionPreview}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-8 py-8">

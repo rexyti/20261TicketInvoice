@@ -6,7 +6,13 @@ export function AppHeader() {
       <div className="h-full px-8 md:px-12 flex items-center justify-between">
         <div className="flex items-center gap-5">
           <div className="w-20 h-20 bg-[#9c98aa]" />
-          <span className="text-[#d8d4e6] font-semibold text-5xl leading-none">Ticket Seller</span>
+          <button
+            type="button"
+            className="text-[#d8d4e6] font-semibold text-5xl leading-none"
+            onClick={() => window.location.assign("/")}
+          >
+            Ticket Seller
+          </button>
         </div>
 
         <div className="flex items-center gap-4">
