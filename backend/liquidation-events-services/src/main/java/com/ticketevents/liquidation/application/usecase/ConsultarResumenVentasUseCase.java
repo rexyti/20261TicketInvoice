@@ -34,6 +34,8 @@ public class ConsultarResumenVentasUseCase {
         ResumenVentasEvento snapshot;
         try {
             snapshot = eventSnapshotRepository.getSnapshot(eventoId);
+        } catch (BusinessException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Error al consultar servicio externo para evento {}: {}", eventoId, e.getMessage());
             throw new TechnicalException(ErrorCode.EXTERNAL_SERVICE_UNAVAILABLE, e);

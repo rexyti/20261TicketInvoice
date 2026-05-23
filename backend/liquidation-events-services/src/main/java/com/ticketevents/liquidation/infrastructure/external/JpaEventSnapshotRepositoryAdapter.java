@@ -2,15 +2,15 @@ package com.ticketevents.liquidation.infrastructure.external;
 
 import com.ticketevents.liquidation.domain.entities.CondicionLiquidacion;
 import com.ticketevents.liquidation.domain.entities.ResumenVentasEvento;
-import com.ticketevents.liquidation.domain.repositories.EventSnapshotRepository;
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.util.EnumMap;
 import java.util.Map;
-import org.springframework.stereotype.Repository;
+import java.util.Optional;
+import org.springframework.stereotype.Component;
 
-@Repository
-public class JpaEventSnapshotRepositoryAdapter implements EventSnapshotRepository {
+@Component
+public class JpaEventSnapshotRepositoryAdapter {
 
     private final EntityManager entityManager;
 
@@ -18,15 +18,25 @@ public class JpaEventSnapshotRepositoryAdapter implements EventSnapshotRepositor
         this.entityManager = entityManager;
     }
 
-    @Override
-    public ResumenVentasEvento getSnapshot(Long eventoId) {
-        String eventoSql = "SELECT e.id, e.nombre, e.estado FROM eventos e WHERE e.id = :eventoId";
-        Object[] evento = (Object[]) entityManager.createNativeQuery(eventoSql)
+    public Optional<EventoMetadata> findEventoMetadata(Long eventoId) {
+        if (eventoId == null) {
+            return Optional.empty();
+        }
+        String eventoSql = "SELECT e.nombre, e.estado FROM eventos e WHERE e.id = :eventoId";
+        Object[] row = (Object[]) entityManager.createNativeQuery(eventoSql)
                 .setParameter("eventoId", eventoId)
                 .getResultStream()
                 .findFirst()
                 .orElse(null);
-        if (evento == null) {
+        if (row == null) {
+            return Optional.empty();
+        }
+        return Optional.of(new EventoMetadata(String.valueOf(row[0]), String.valueOf(row[1])));
+    }
+
+    public ResumenVentasEvento getSnapshot(Long eventoId) {
+        Optional<EventoMetadata> metadata = findEventoMetadata(eventoId);
+        if (metadata.isEmpty()) {
             return null;
         }
 
@@ -57,9 +67,9 @@ public class JpaEventSnapshotRepositoryAdapter implements EventSnapshotRepositor
         BigDecimal total = recaudo.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
 
         ResumenVentasEvento out = new ResumenVentasEvento();
-        out.setIdEvento(((Number) evento[0]).longValue());
-        out.setNombreEvento(String.valueOf(evento[1]));
-        out.setEstadoEvento(String.valueOf(evento[2]));
+        out.setIdEvento(eventoId);
+        out.setNombreEvento(metadata.get().nombre());
+        out.setEstadoEvento(metadata.get().estado());
         out.setTicketsPorCondicion(tickets);
         out.setRecaudoPorCondicion(recaudo);
         out.setTotalRecaudoBruto(total);

@@ -2,6 +2,8 @@
 
 Este documento define la infraestructura técnica y lógica para la gestión de eventos masivos, integrando la disponibilidad física de recintos, la validación de accesos en tiempo real y la dispersión financiera automatizada.
 
+**Integración HTTP con Módulo 1 (snapshot / ngrok):** ver la guía paso a paso en [docs/GUIA-INTEGRACION-MODULE1.md](docs/GUIA-INTEGRACION-MODULE1.md).
+
 ---
 
 ## 🏟️ Módulo 1: Gestión de Recintos e Inventario de Aforo
