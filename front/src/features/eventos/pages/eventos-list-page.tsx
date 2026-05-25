@@ -77,53 +77,44 @@ export function EventosListPage({ onSelectEvento }: EventosListPageProps) {
           <div className="space-y-4">
             {eventos.map((evento) => (
               <Card
-                key={evento.id}
+                key={evento.eventoIdLocal}
                 className="p-6 hover:shadow-md transition-shadow cursor-pointer border border-gray-200"
                 onClick={() => onSelectEvento(evento)}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    {/* Header */}
                     <div className="flex items-start gap-4 mb-4">
                       <div className="flex-1">
                         <h3 className="text-xl font-bold text-gray-900">{evento.nombre}</h3>
                         <div className="flex items-center gap-2 mt-2 flex-wrap">
-                          <span className="text-sm text-gray-600">{evento.ciudad}</span>
+                          <span className="text-sm text-gray-600">{evento.tipo}</span>
                           <span className="text-xs text-gray-400">•</span>
                           <Badge variant={getEstadoBadge(evento.estado)}>{evento.estado}</Badge>
-                          <span className="text-xs text-gray-500">ID: #{evento.id}</span>
+                          <span className="text-xs text-gray-500">ID: #{evento.eventoIdLocal}</span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Stats Grid */}
                     <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                       <div className="bg-blue-50 p-3 rounded-lg">
-                        <p className="text-xs text-gray-600 font-medium">Capacidad</p>
-                        <p className="text-lg font-bold text-blue-600 mt-1">
-                          {evento.capacidad.toLocaleString("es-CO")}
-                        </p>
+                        <p className="text-xs text-gray-600 font-medium">Inicio</p>
+                        <p className="text-lg font-bold text-blue-600 mt-1">{evento.fechaInicio}</p>
                       </div>
                       <div className="bg-green-50 p-3 rounded-lg">
-                        <p className="text-xs text-gray-600 font-medium">Tickets Vendidos</p>
-                        <p className="text-lg font-bold text-green-600 mt-1">
-                          {evento.ticketsVendidos.toLocaleString("es-CO")}
-                        </p>
+                        <p className="text-xs text-gray-600 font-medium">Fin</p>
+                        <p className="text-lg font-bold text-green-600 mt-1">{evento.fechaFin}</p>
                       </div>
                       <div className="bg-purple-50 p-3 rounded-lg">
-                        <p className="text-xs text-gray-600 font-medium">Ocupación</p>
-                        <p className="text-lg font-bold text-purple-600 mt-1">
-                          {((evento.ticketsVendidos / evento.capacidad) * 100).toFixed(1)}%
-                        </p>
+                        <p className="text-xs text-gray-600 font-medium">Tipo</p>
+                        <p className="text-lg font-bold text-purple-600 mt-1">{evento.tipo}</p>
                       </div>
                       <div className="bg-gray-100 p-3 rounded-lg">
-                        <p className="text-xs text-gray-600 font-medium">Fecha</p>
-                        <p className="text-sm font-semibold text-gray-700 mt-1">{evento.fecha}</p>
+                        <p className="text-xs text-gray-600 font-medium">Reingreso</p>
+                        <p className="text-sm font-semibold text-gray-700 mt-1">{evento.reingresoHabilitado ? "Si" : "No"}</p>
                       </div>
                     </div>
                   </div>
 
-                  {/* Action Button */}
                   <div className="ml-4 flex items-center justify-center w-12 h-12 rounded-lg bg-purple-100 hover:bg-purple-200 transition-colors flex-shrink-0">
                     <ChevronRight className="w-6 h-6 text-purple-600" />
                   </div>

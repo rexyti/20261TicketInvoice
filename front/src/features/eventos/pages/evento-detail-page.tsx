@@ -19,13 +19,13 @@ export function EventoDetailPage({ evento, onBack }: EventoDetailPageProps) {
   const [currentStep, setCurrentStep] = useState<StepType>(1);
   const [showFeature08, setShowFeature08] = useState(false);
   
-  const { data: resumenData, isLoading: resumenLoading, error: resumenError } = useResumenVentas(evento.id);
-  const { data: estadoData, isLoading: estadoLoading, error: estadoError } = useEstadoIngreso(evento.id);
-  const { data: ingresosData, isLoading: ingresosLoading, error: ingresosError } = useIngresosTickets(evento.id);
+  const { data: resumenData, isLoading: resumenLoading, error: resumenError } = useResumenVentas(evento.eventoIdLocal);
+  const { data: estadoData, isLoading: estadoLoading, error: estadoError } = useEstadoIngreso(evento.eventoIdLocal);
+  const { data: ingresosData, isLoading: ingresosLoading, error: ingresosError } = useIngresosTickets(evento.eventoIdLocal);
 
   const distribucionPreview: CalculoDistribucionData = resumenData
     ? {
-        calculoId: `preview-${evento.id}`,
+        calculoId: `preview-${evento.eventoIdLocal}`,
         fechaCalculo: new Date().toLocaleDateString(),
         estadoLiquidacion: "PRELIMINAR",
         metricas: {
@@ -42,7 +42,7 @@ export function EventoDetailPage({ evento, onBack }: EventoDetailPageProps) {
         puedeCalcular: true,
       }
     : {
-        calculoId: `preview-${evento.id}`,
+        calculoId: `preview-${evento.eventoIdLocal}`,
         fechaCalculo: new Date().toLocaleDateString(),
         estadoLiquidacion: "SIN_DATOS",
         metricas: {
@@ -185,10 +185,10 @@ export function EventoDetailPage({ evento, onBack }: EventoDetailPageProps) {
                 <Badge variant={evento.estado === "LIQUIDADO" ? "default" : "secondary"}>
                   {evento.estado}
                 </Badge>
-                <span className="text-sm text-gray-600">ID: {evento.id}</span>
+                <span className="text-sm text-gray-600">ID: {evento.eventoIdLocal}</span>
               </div>
               <h1 className="text-4xl font-bold text-gray-900">{evento.nombre}</h1>
-              <p className="text-gray-600 mt-2">{evento.ciudad} • {evento.fecha}</p>
+              <p className="text-gray-600 mt-2">{evento.tipo} · {evento.fechaInicio} - {evento.fechaFin}</p>
             </div>
           </div>
         </div>
@@ -202,7 +202,7 @@ export function EventoDetailPage({ evento, onBack }: EventoDetailPageProps) {
           <div className="w-full max-w-[1280px]">
             <Feature08CalcularDistribucionDelRecaudoPage
               onBack={() => setShowFeature08(false)}
-              evento={{ id: String(evento.id), nombre: evento.nombre, recintoTipo: "Teatro" }}
+              evento={{ id: String(evento.eventoIdLocal), nombre: evento.nombre, recintoTipo: "Teatro" }}
               distribucion={distribucionPreview}
             />
           </div>

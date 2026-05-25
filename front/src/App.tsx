@@ -242,11 +242,11 @@ export default function App() {
     if (!term || !eventos) return;
     const encontrado = eventos.find((ev) => ev.nombre.toLowerCase().includes(term));
     if (!encontrado) return;
-    setEventoId(encontrado.id);
+    setEventoId(encontrado.eventoIdLocal);
     setEventoNombre(encontrado.nombre);
     const navState: NavigationState = {
       screen: "eventoAcciones",
-      eventoId: encontrado.id,
+      eventoId: encontrado.eventoIdLocal,
       eventoNombre: encontrado.nombre,
     };
     setScreen("eventoAcciones");
@@ -258,11 +258,11 @@ export default function App() {
   ) ?? [];
 
   const handleSelectEventoFromList = (evento: EventoListItem) => {
-    setEventoId(evento.id);
+    setEventoId(evento.eventoIdLocal);
     setEventoNombre(evento.nombre);
     const navState: NavigationState = {
       screen: "eventoAcciones",
-      eventoId: evento.id,
+      eventoId: evento.eventoIdLocal,
       eventoNombre: evento.nombre,
     };
     setScreen("eventoAcciones");
@@ -325,17 +325,17 @@ export default function App() {
                   {eventosFiltrados.length > 0 ? (
                     <div className="grid gap-4">
                       {eventosFiltrados.map((evento) => (
-                        <Card key={evento.id} className="p-5 border border-[#d7d1e9] bg-white cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleSelectEventoFromList(evento)}>
+                        <Card key={evento.eventoIdLocal} className="p-5 border border-[#d7d1e9] bg-white cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleSelectEventoFromList(evento)}>
                           <div className="flex items-start justify-between gap-4">
                             <div>
                               <h2 className="text-xl font-semibold text-[#1f1a37]">{evento.nombre}</h2>
-                              <p className="text-sm text-[#6f6990] mt-1">ID: {evento.id} · {evento.ciudad} · {evento.fecha}</p>
+                              <p className="text-sm text-[#6f6990] mt-1">ID: {evento.eventoIdLocal} · {evento.fechaInicio} · {evento.tipo}</p>
                             </div>
                             <span className="px-3 py-1 rounded-full text-sm font-semibold bg-[#e5f6ea] text-[#166534]">{evento.estado}</span>
                           </div>
                           <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-[#4f4474]">
-                            <p><strong>Capacidad:</strong> {evento.capacidad.toLocaleString("es-CO")}</p>
-                            <p><strong>Vendidos:</strong> {evento.ticketsVendidos.toLocaleString("es-CO")}</p>
+                            <p><strong>Inicio:</strong> {evento.fechaInicio}</p>
+                            <p><strong>Fin:</strong> {evento.fechaFin}</p>
                           </div>
                         </Card>
                       ))}
