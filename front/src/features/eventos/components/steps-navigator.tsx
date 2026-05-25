@@ -121,7 +121,7 @@ export function StepsNavigator({ currentStep, onStepChange }: StepsNavigatorProp
     <div className="bg-white border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-8 py-4">
         <div className="grid grid-cols-7 gap-2">
-          {STEPS.map((step) => {
+          {STEPS.map((step, index) => {
             const isActive = step.id === currentStep;
             const isPassed = step.id < currentStep;
             const classes = getColorClasses(step.color, isActive);

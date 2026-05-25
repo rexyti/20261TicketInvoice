@@ -13,11 +13,6 @@ const EVENTOS_KEYS = {
   resumenVentas: (eventoId: number) => [...EVENTOS_KEYS.all, "resumen-ventas", eventoId] as const,
   estadoIngreso: (eventoId: number) => [...EVENTOS_KEYS.all, "estado-ingreso", eventoId] as const,
   ingresos: (eventoId: number) => [...EVENTOS_KEYS.all, "ingresos", eventoId] as const,
-  recinto: (recintoId: number) => [...EVENTOS_KEYS.all, "recinto", recintoId] as const,
-  configuracionLiquidacion: (eventoId: number) => [...EVENTOS_KEYS.all, "configuracion-liquidacion", eventoId] as const,
-  comisionRecinto: (recintoId: number) => [...EVENTOS_KEYS.all, "comision-recinto", recintoId] as const,
-  distribucionRecaudo: (eventoId: number) => [...EVENTOS_KEYS.all, "distribucion-recaudo", eventoId] as const,
-  calcularDistribucion: (eventoId: number) => [...EVENTOS_KEYS.all, "calcular-distribucion", eventoId] as const,
 };
 
 // Tipos para listado de eventos
@@ -32,17 +27,70 @@ export interface EventoListItem {
 }
 
 /**
+ * Mocks de eventos (datos realistas según specs)
+ * Coinciden con: ResumenVentasResponse, EstadoIngresoResponse, IngresosResponse
+ */
+const MOCK_EVENTOS: EventoListItem[] = [
+  {
+    id: 1,
+    nombre: "Festival Estéreo Capital 2026",
+    ciudad: "Bogotá",
+    estado: "CERRADO",
+    fecha: "02/03/2026",
+    capacidad: 25000,
+    ticketsVendidos: 5420,
+  },
+  {
+    id: 2,
+    nombre: "Festival de Verano 2026",
+    ciudad: "Medellín",
+    estado: "LIQUIDADO",
+    fecha: "15/02/2026",
+    capacidad: 20000,
+    ticketsVendidos: 15420,
+  },
+  {
+    id: 3,
+    nombre: "Concierto Rock - Teatro Mayor",
+    ciudad: "Cali",
+    estado: "CERRADO",
+    fecha: "10/01/2026",
+    capacidad: 5000,
+    ticketsVendidos: 4980,
+  },
+  {
+    id: 4,
+    nombre: "Conferencia Tech Summit 2026",
+    ciudad: "Bogotá",
+    estado: "CERRADO",
+    fecha: "05/03/2026",
+    capacidad: 2000,
+    ticketsVendidos: 1850,
+  },
+  {
+    id: 5,
+    nombre: "Festival Rock al Parque 2026",
+    ciudad: "Bogotá",
+    estado: "LIQUIDADO",
+    fecha: "21/02/2026",
+    capacidad: 30000,
+    ticketsVendidos: 23450,
+  },
+];
+
+/**
  * Hook para obtener lista de eventos
- * Los eventos son consumidos desde otro microservicio de gestión de recintos.
- * Si el servicio no está disponible, se muestra el error correspondiente.
  */
 export function useEventos() {
   return useQuery({
     queryKey: EVENTOS_KEYS.list(),
     queryFn: async () => {
-      return api.get("eventos").json<EventoListItem[]>();
+      // Por ahora retorna mock, reemplazar con:
+      // return api.get("eventos").json<EventoListItem[]>();
+      return new Promise<EventoListItem[]>((resolve) => {
+        setTimeout(() => resolve(MOCK_EVENTOS), 300);
+      });
     },
-    retry: false,
   });
 }
 
@@ -83,111 +131,6 @@ export function useIngresosTickets(eventoId?: number) {
     queryFn: async () => {
       if (!eventoId) throw new Error("eventoId es requerido");
       return api.get(`eventos/${eventoId}/ingresos`).json<IngresosResponse>();
-    },
-    enabled: Boolean(eventoId),
-  });
-}
-
-export interface ConsultarRecintoResponse {
-  id: number;
-  nombre: string;
-  tipoRecinto: string;
-  tasaComision: number;
-  estado: string;
-}
-
-export function useRecinto(recintoId?: number) {
-  return useQuery<ConsultarRecintoResponse>({
-    queryKey: recintoId ? EVENTOS_KEYS.recinto(recintoId) : ["disabled"],
-    queryFn: async () => {
-      if (!recintoId) throw new Error("recintoId es requerido");
-      return api.get(`recintos/${recintoId}`).json<ConsultarRecintoResponse>();
-    },
-    enabled: Boolean(recintoId),
-  });
-}
-
-export interface DeterminarTipoLiquidacionResponse {
-  id: number;
-  eventoId: number;
-  tipoLiquidacion: string;
-  valorComision: number;
-  porcentaje: number;
-  mensaje: string;
-}
-
-export function useConfiguracionLiquidacion(eventoId?: number) {
-  return useQuery<DeterminarTipoLiquidacionResponse>({
-    queryKey: eventoId ? EVENTOS_KEYS.configuracionLiquidacion(eventoId) : ["disabled"],
-    queryFn: async () => {
-      if (!eventoId) throw new Error("eventoId es requerido");
-      return api.get(`eventos/${eventoId}/configuracion-liquidacion`).json<DeterminarTipoLiquidacionResponse>();
-    },
-    enabled: Boolean(eventoId),
-  });
-}
-
-export interface ComisionResponse {
-  configurada: boolean;
-  mensaje: string;
-  tipoComision: string;
-  valorComision: number;
-}
-
-export function useComisionRecinto(recintoId?: number) {
-  return useQuery<ComisionResponse>({
-    queryKey: recintoId ? EVENTOS_KEYS.comisionRecinto(recintoId) : ["disabled"],
-    queryFn: async () => {
-      if (!recintoId) throw new Error("recintoId es requerido");
-      return api.get(`recintos/${recintoId}/comision`).json<ComisionResponse>();
-    },
-    enabled: Boolean(recintoId),
-  });
-}
-
-export interface ConsultarDistribucionResponse {
-  eventoId: number;
-  nombreEvento: string;
-  totalBruto: number;
-  totalPagoPromotor: number;
-  totalComisionPlataforma: number;
-  totalDistribuible: number;
-  estado: string;
-  fechaCalculo: string;
-  fechaLiquidacion: string;
-}
-
-export function useDistribucionRecaudo(eventoId?: number) {
-  return useQuery<ConsultarDistribucionResponse>({
-    queryKey: eventoId ? EVENTOS_KEYS.distribucionRecaudo(eventoId) : ["disabled"],
-    queryFn: async () => {
-      if (!eventoId) throw new Error("eventoId es requerido");
-      return api.get(`eventos/${eventoId}/distribucion-recaudo`).json<ConsultarDistribucionResponse>();
-    },
-    enabled: Boolean(eventoId),
-  });
-}
-
-export interface CalcularDistribucionResponse {
-  eventoId: number;
-  nombreEvento: string;
-  totalBruto: number;
-  totalNetoPreliminar: number;
-  totalDistribuible: number;
-  comisionPlataforma: number;
-  descuentoCancelados: number;
-  descuentoCortesia: number;
-  estado: string;
-  fechaCalculo: string;
-  mensaje: string;
-}
-
-export function useCalcularDistribucion(eventoId?: number) {
-  return useQuery<CalcularDistribucionResponse>({
-    queryKey: eventoId ? EVENTOS_KEYS.calcularDistribucion(eventoId) : ["disabled"],
-    queryFn: async () => {
-      if (!eventoId) throw new Error("eventoId es requerido");
-      return api.get(`eventos/${eventoId}/calcular-distribucion`).json<CalcularDistribucionResponse>();
     },
     enabled: Boolean(eventoId),
   });

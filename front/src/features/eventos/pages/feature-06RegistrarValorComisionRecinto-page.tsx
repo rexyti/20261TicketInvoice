@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pencil, RefreshCcw, Search, Wallet } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Pencil, RefreshCcw, Search, ShieldAlert, Wallet } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { BackendNotConnectedModal } from "@/shared/ui/backend-not-connected-modal";
 

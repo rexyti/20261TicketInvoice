@@ -1,4 +1,4 @@
-import ky, { isHTTPError } from "ky";
+import ky from "ky";
 import { env } from "@/core/config/env";
 import { ApiError, NetworkError } from "@/core/errors/ApiError";
 
@@ -8,11 +8,10 @@ export const api = ky.create({
   headers: { "Content-Type": "application/json" },
   hooks: {
     beforeError: [
-      async (state) => {
-        const { error } = state;
-        if (!isHTTPError(error)) return new NetworkError(error);
+      async (error) => {
+        const { response } = error;
+        if (!response) return new NetworkError(error);
 
-        const response = error.response;
         const body = await response.json().catch(() => ({}));
         const code = (body as { code?: string }).code ?? `HTTP_${response.status}`;
         const message = (body as { message?: string }).message ?? error.message;

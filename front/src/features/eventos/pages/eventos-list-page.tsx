@@ -25,6 +25,14 @@ export function EventosListPage({ onSelectEvento }: EventosListPageProps) {
     }
   };
 
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("es-CO", {
+      style: "currency",
+      currency: "COP",
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}

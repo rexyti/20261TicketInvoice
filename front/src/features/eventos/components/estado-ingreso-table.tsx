@@ -37,12 +37,12 @@ export function EstadoIngresoTable({ data, isLoading, error }: EstadoIngresoTabl
   const estadoData = [
     {
       estado: "CHECK-IN (Asistieron)",
-      cantidad: data.totalCheckeados,
+      cantidad: data.ticketsCheckedIn,
       badge: "success",
     },
     {
       estado: "NO ASISTIERON",
-      cantidad: data.totalNoAsistieron,
+      cantidad: data.ticketsNotAttended,
       badge: "warning",
     },
   ];
@@ -64,7 +64,7 @@ export function EstadoIngresoTable({ data, isLoading, error }: EstadoIngresoTabl
             </thead>
             <tbody>
               {estadoData.map((row) => {
-                const total = (data.totalCheckeados ?? 0) + (data.totalNoAsistieron ?? 0);
+                const total = (data.ticketsCheckedIn ?? 0) + (data.ticketsNotAttended ?? 0);
                 const porcentaje = total > 0 ? ((row.cantidad ?? 0) / total) * 100 : 0;
 
                 return (
@@ -101,13 +101,13 @@ export function EstadoIngresoTable({ data, isLoading, error }: EstadoIngresoTabl
             <div>
               <p className="text-sm text-gray-600">Total Tickets</p>
               <p className="text-xl font-bold text-gray-900 mt-1">
-                {(data.totalCheckeados ?? 0) + (data.totalNoAsistieron ?? 0)}
+                {(data.ticketsCheckedIn ?? 0) + (data.ticketsNotAttended ?? 0)}
               </p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Tasa de Asistencia</p>
               <p className="text-xl font-bold text-green-600 mt-1">
-                {(((data.totalCheckeados ?? 0) / ((data.totalCheckeados ?? 0) + (data.totalNoAsistieron ?? 0))) * 100).toFixed(1)}%
+                {(((data.ticketsCheckedIn ?? 0) / ((data.ticketsCheckedIn ?? 0) + (data.ticketsNotAttended ?? 0))) * 100).toFixed(1)}%
               </p>
             </div>
           </div>
