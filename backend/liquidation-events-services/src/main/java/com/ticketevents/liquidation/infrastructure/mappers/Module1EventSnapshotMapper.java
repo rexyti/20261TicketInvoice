@@ -43,7 +43,10 @@ public class Module1EventSnapshotMapper {
         ResumenVentasEvento out = new ResumenVentasEvento();
         // preserve local numeric id for domain consistency
         out.setIdEvento(localEventoId);
-        out.setNombreEvento(null);
+        String nombre = src.getNombreEvento();
+        if (nombre != null && !nombre.isBlank()) {
+            out.setNombreEvento(nombre.trim());
+        }
         out.setEstadoEvento(null);
         out.setTicketsPorCondicion(tickets);
         out.setRecaudoPorCondicion(recaudo);

@@ -5,6 +5,7 @@ import java.util.List;
 public class Module1EventSnapshotDto {
 
     private String eventoId;
+    private String nombreEvento;
     private String recintoId;
     private String tipoRecinto;
     private List<CondicionDto> condiciones;
@@ -12,6 +13,8 @@ public class Module1EventSnapshotDto {
 
     public String getEventoId() { return eventoId; }
     public void setEventoId(String eventoId) { this.eventoId = eventoId; }
+    public String getNombreEvento() { return nombreEvento; }
+    public void setNombreEvento(String nombreEvento) { this.nombreEvento = nombreEvento; }
     public String getRecintoId() { return recintoId; }
     public void setRecintoId(String recintoId) { this.recintoId = recintoId; }
     public String getTipoRecinto() { return tipoRecinto; }

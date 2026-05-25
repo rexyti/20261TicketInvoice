@@ -17,7 +17,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 /**
- * Fetches ticket aggregates from Module1 and enriches event metadata from the local database.
+ * Fetches ticket aggregates from Module1 and enriches estado (and nombre if missing) from the local database.
  */
 @Repository
 @ConditionalOnProperty(name = "external.module1.enabled", havingValue = "true")
@@ -86,8 +86,10 @@ public class RemoteEventSnapshotRepositoryAdapter implements EventSnapshotReposi
 
     private void enrichEventMetadata(ResumenVentasEvento snapshot, Long eventoId) {
         Optional<EventoMetadata> local = jpaAdapter.findEventoMetadata(eventoId);
-        if (local.isPresent()) {
+        if (nombreEventoAusente(snapshot) && local.isPresent()) {
             snapshot.setNombreEvento(local.get().nombre());
+        }
+        if (local.isPresent()) {
             snapshot.setEstadoEvento(local.get().estado());
             return;
         }
@@ -96,5 +98,10 @@ public class RemoteEventSnapshotRepositoryAdapter implements EventSnapshotReposi
                 "No local metadata for eventoId={}; assuming {} because Module1 returned a snapshot",
                 eventoId,
                 ESTADO_CERRADO);
+    }
+
+    private static boolean nombreEventoAusente(ResumenVentasEvento snapshot) {
+        String nombre = snapshot.getNombreEvento();
+        return nombre == null || nombre.isBlank();
     }
 }
