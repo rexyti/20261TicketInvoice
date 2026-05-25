@@ -17,6 +17,17 @@ CREATE TABLE IF NOT EXISTS eventos (
     estado VARCHAR(50) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS eventos_externos (
+    evento_local_id BIGINT PRIMARY KEY REFERENCES eventos(id),
+    evento_externo_id VARCHAR(64) NOT NULL UNIQUE,
+    recinto_externo_id VARCHAR(64),
+    estado_externo VARCHAR(32),
+    tipo VARCHAR(64),
+    fecha_inicio VARCHAR(64),
+    fecha_fin VARCHAR(64),
+    fecha_sincronizacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Tickets table
 CREATE TABLE IF NOT EXISTS tickets (
     id BIGSERIAL PRIMARY KEY,
