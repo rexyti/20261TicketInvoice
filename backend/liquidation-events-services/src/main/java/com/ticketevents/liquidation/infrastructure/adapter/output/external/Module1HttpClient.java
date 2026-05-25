@@ -1,9 +1,12 @@
 package com.ticketevents.liquidation.infrastructure.adapter.output.external;
 
 import com.ticketevents.liquidation.infrastructure.adapter.output.external.dto.Module1EventSnapshotDto;
+import com.ticketevents.liquidation.infrastructure.adapter.output.external.dto.Module1EventSummaryDto;
 import com.ticketevents.liquidation.shared.errors.BusinessException;
 import com.ticketevents.liquidation.shared.errors.ErrorCode;
 import com.ticketevents.liquidation.shared.errors.TechnicalException;
+import java.util.List;
+import org.springframework.core.ParameterizedTypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,6 +74,31 @@ public class Module1HttpClient {
         } catch (RestClientException ex) {
             log.error("Error calling Module1 snapshot endpoint", ex);
             throw new TechnicalException(ErrorCode.EXTERNAL_SERVICE_UNAVAILABLE, "Error calling Module1", ex);
+        }
+    }
+
+    public List<Module1EventSummaryDto> getEventosPorEstado(String estado) {
+        if (baseUrl.isBlank()) {
+            throw new TechnicalException(ErrorCode.EXTERNAL_SERVICE_UNAVAILABLE, "Module1 base URL is not configured");
+        }
+        String url = String.format("%s/api/v1/eventos?estado=%s", baseUrl, estado);
+        try {
+            log.debug("Requesting Module1 events from URL={}", url);
+            HttpHeaders headers = new HttpHeaders();
+            if (ngrokSkipBrowserWarning) {
+                headers.set(NGROK_SKIP_HEADER, "true");
+            }
+            List<Module1EventSummaryDto> body = restTemplate
+                    .exchange(url, HttpMethod.GET, new HttpEntity<>(headers),
+                            new ParameterizedTypeReference<List<Module1EventSummaryDto>>() {})
+                    .getBody();
+            return body != null ? body : List.of();
+        } catch (HttpClientErrorException ex) {
+            log.error("Module1 returned HTTP {} while listing events by estado={}", ex.getStatusCode().value(), estado);
+            throw new TechnicalException(ErrorCode.EXTERNAL_SERVICE_UNAVAILABLE, "Error calling Module1 event catalog", ex);
+        } catch (RestClientException ex) {
+            log.error("Error calling Module1 event catalog endpoint", ex);
+            throw new TechnicalException(ErrorCode.EXTERNAL_SERVICE_UNAVAILABLE, "Error calling Module1 event catalog", ex);
         }
     }
 

@@ -23,7 +23,7 @@ class Module1LiveIntegrationTest {
             "https://uncoated-unfixed-imaginary.ngrok-free.dev");
     private static final String EVENTO_UUID = System.getProperty(
             "module1.evento-uuid",
-            "03c22676-5ea5-43e5-9c8d-1ccc59211e3c");
+            "b7fd05e3-1087-4b6d-818d-96a1a38e0e5b");
 
     @Test
     void module1SnapshotEndpointIsReachable() {
