@@ -13,7 +13,7 @@ Esta guía explica cómo **probar y operar** la integración entre el **Módulo 
 2. El adaptador resuelve el **UUID del Módulo 1** con el mapping en `application.properties`.
 3. Llama a: `GET {base-url}/api/v1/eventos/{uuid}/snapshot`
 4. Mapea condiciones externas (`VENDIDO_SIN_ASISTENCIA`, `CORTESIA`, etc.) al dominio interno.
-5. Completa `nombreEvento` y `estadoEvento` desde PostgreSQL local (seed).
+5. Usa `nombreEvento` del snapshot de Module1; si no viene, lo toma de PostgreSQL local. `estadoEvento` sigue viniendo de la BD local (seed).
 6. Devuelve el resumen consolidado.
 
 ---

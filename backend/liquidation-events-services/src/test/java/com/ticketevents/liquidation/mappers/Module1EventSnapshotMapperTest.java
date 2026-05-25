@@ -35,11 +35,13 @@ public class Module1EventSnapshotMapperTest {
         c2.setTickets(Arrays.asList(t4));
 
         dto.setCondiciones(Arrays.asList(c1,c2));
+        dto.setNombreEvento("Clase Ingenieria de Software");
 
         Module1EventSnapshotMapper mapper = new Module1EventSnapshotMapper();
         ResumenVentasEvento resumen = mapper.map(dto, 123L);
 
         assertEquals(123L, resumen.getIdEvento());
+        assertEquals("Clase Ingenieria de Software", resumen.getNombreEvento());
         assertEquals(3, resumen.getTicketsPorCondicion().get(CondicionLiquidacion.VENDIDO).intValue());
         assertEquals(new BigDecimal("60000.00"), resumen.getRecaudoPorCondicion().get(CondicionLiquidacion.VENDIDO));
         assertEquals(1, resumen.getTicketsPorCondicion().get(CondicionLiquidacion.CORTESIA).intValue());

@@ -65,7 +65,7 @@ public class RemoteEventSnapshotRepositoryAdapterTest {
     }
 
     @Test
-    public void whenClientReturns_enrichesMetadataFromLocalDb() {
+    public void whenClientReturns_enrichesEstadoFromLocalDb_andNombreWhenMissing() {
         Module1HttpClient client = mock(Module1HttpClient.class);
         JpaEventSnapshotRepositoryAdapter jpa = mock(JpaEventSnapshotRepositoryAdapter.class);
         Module1EventSnapshotMapper mapper = mock(Module1EventSnapshotMapper.class);
@@ -85,6 +85,28 @@ public class RemoteEventSnapshotRepositoryAdapterTest {
         assertEquals("Concierto", result.getNombreEvento());
         assertEquals("CERRADO", result.getEstadoEvento());
         verify(jpa, never()).getSnapshot(anyLong());
+    }
+
+    @Test
+    public void whenModule1ProvidesNombre_doesNotOverwriteWithLocalDb() {
+        Module1HttpClient client = mock(Module1HttpClient.class);
+        JpaEventSnapshotRepositoryAdapter jpa = mock(JpaEventSnapshotRepositoryAdapter.class);
+        Module1EventSnapshotMapper mapper = mock(Module1EventSnapshotMapper.class);
+
+        Module1EventSnapshotDto dto = new Module1EventSnapshotDto();
+        ResumenVentasEvento mapped = new ResumenVentasEvento();
+        mapped.setNombreEvento("Clase Ingenieria de Software");
+        when(client.getSnapshot(anyString())).thenReturn(dto);
+        when(mapper.map(eq(dto), eq(1L))).thenReturn(mapped);
+        when(jpa.findEventoMetadata(1L)).thenReturn(Optional.of(new EventoMetadata("Concierto Rock 2026", "CERRADO")));
+
+        RemoteEventSnapshotRepositoryAdapter adapter = new RemoteEventSnapshotRepositoryAdapter(
+                client, externalIdResolver(), jpa, mapper, properties(false));
+
+        ResumenVentasEvento result = adapter.getSnapshot(1L);
+
+        assertEquals("Clase Ingenieria de Software", result.getNombreEvento());
+        assertEquals("CERRADO", result.getEstadoEvento());
     }
 
     @Test
