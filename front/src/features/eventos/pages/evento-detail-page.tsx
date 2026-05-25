@@ -19,6 +19,10 @@ export function EventoDetailPage({ evento, onBack }: EventoDetailPageProps) {
   const [currentStep, setCurrentStep] = useState<StepType>(1);
   const [showFeature08, setShowFeature08] = useState(false);
   
+  const { data: resumenData, isLoading: resumenLoading, error: resumenError } = useResumenVentas(evento.id);
+  const { data: estadoData, isLoading: estadoLoading, error: estadoError } = useEstadoIngreso(evento.id);
+  const { data: ingresosData, isLoading: ingresosLoading, error: ingresosError } = useIngresosTickets(evento.id);
+
   const distribucionPreview: CalculoDistribucionData = resumenData
     ? {
         calculoId: `preview-${evento.id}`,
@@ -55,10 +59,6 @@ export function EventoDetailPage({ evento, onBack }: EventoDetailPageProps) {
         puedeCalcular: false,
         razonBloqueo: "Resumen de ventas no disponible",
       };
-
-  const { data: resumenData, isLoading: resumenLoading, error: resumenError } = useResumenVentas(evento.id);
-  const { data: estadoData, isLoading: estadoLoading, error: estadoError } = useEstadoIngreso(evento.id);
-  const { data: ingresosData, isLoading: ingresosLoading, error: ingresosError } = useIngresosTickets(evento.id);
 
   const renderStepContent = () => {
     switch (currentStep) {
