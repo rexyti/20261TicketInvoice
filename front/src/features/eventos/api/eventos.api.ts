@@ -20,27 +20,27 @@ const EVENTOS_KEYS = {
   calcularDistribucion: (eventoId: number) => [...EVENTOS_KEYS.all, "calcular-distribucion", eventoId] as const,
 };
 
-// Tipos para listado de eventos
+// Tipos para listado de eventos finalizados (desde Módulo 1)
 export interface EventoListItem {
-  id: number;
+  eventoIdLocal: number;
+  eventoIdExterno: string;
   nombre: string;
-  ciudad: string;
-  estado: "PROGRAMADO" | "EN_CURSO" | "CERRADO" | "LIQUIDADO";
-  fecha: string;
-  capacidad: number;
-  ticketsVendidos: number;
+  fechaInicio: string;
+  fechaFin: string;
+  tipo: string;
+  recintoIdExterno: string;
+  estado: string;
+  reingresoHabilitado: boolean;
 }
 
 /**
- * Hook para obtener lista de eventos
- * Los eventos son consumidos desde otro microservicio de gestión de recintos.
- * Si el servicio no está disponible, se muestra el error correspondiente.
+ * Hook para obtener lista de eventos finalizados desde el Módulo 1
  */
 export function useEventos() {
   return useQuery({
     queryKey: EVENTOS_KEYS.list(),
     queryFn: async () => {
-      return api.get("eventos").json<EventoListItem[]>();
+      return api.get("eventos/finalizados").json<EventoListItem[]>();
     },
     retry: false,
   });
