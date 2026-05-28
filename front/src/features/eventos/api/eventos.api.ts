@@ -57,6 +57,7 @@ export function useResumenVentas(eventoId?: number) {
       return api.get(`eventos/${eventoId}/resumen-ventas`).json<ResumenVentasResponse>();
     },
     enabled: Boolean(eventoId),
+    retry: false,
   });
 }
 
@@ -71,6 +72,7 @@ export function useEstadoIngreso(eventoId?: number) {
       return api.get(`eventos/${eventoId}/estado-ingreso`).json<EstadoIngresoResponse>();
     },
     enabled: Boolean(eventoId),
+    retry: false,
   });
 }
 
@@ -85,6 +87,7 @@ export function useIngresosTickets(eventoId?: number) {
       return api.get(`eventos/${eventoId}/ingresos`).json<IngresosResponse>();
     },
     enabled: Boolean(eventoId),
+    retry: false,
   });
 }
 

@@ -27,6 +27,7 @@ type Screen =
 interface NavigationState {
   screen: Screen;
   eventoId: number | null;
+  eventoUuid: string | null;
   eventoNombre: string | null;
 }
 
@@ -160,6 +161,11 @@ function getApiError(error: unknown): string | null {
   return "Error al consultar el servicio externo";
 }
 
+function formatUuid(uuid?: string | null): string {
+  if (!uuid) return "Sin UUID externo";
+  return uuid.length > 18 ? `${uuid.slice(0, 8)}...${uuid.slice(-4)}` : uuid;
+}
+
 function LoadingSpinner({ mensaje }: { mensaje: string }) {
   return (
     <div className="flex items-center justify-center min-h-[400px]">
@@ -202,11 +208,12 @@ function FeatureNotImplemented({ onBack }: { onBack: () => void }) {
   );
 }
 
-const initialState: NavigationState = { screen: "index", eventoId: null, eventoNombre: null };
+const initialState: NavigationState = { screen: "index", eventoId: null, eventoUuid: null, eventoNombre: null };
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>("index");
   const [eventoId, setEventoId] = useState<number | null>(null);
+  const [eventoUuid, setEventoUuid] = useState<string | null>(null);
   const [eventoNombre, setEventoNombre] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -230,6 +237,7 @@ export default function App() {
     const navState: NavigationState = {
       screen: nextScreen,
       eventoId,
+      eventoUuid,
       eventoNombre,
     };
     setScreen(nextScreen);
@@ -240,13 +248,18 @@ export default function App() {
     e.preventDefault();
     const term = searchTerm.trim().toLowerCase();
     if (!term || !eventos) return;
-    const encontrado = eventos.find((ev) => ev.nombre.toLowerCase().includes(term));
+    const encontrado = eventos.find((ev) =>
+      ev.nombre.toLowerCase().includes(term) ||
+      ev.eventoIdExterno?.toLowerCase().includes(term)
+    );
     if (!encontrado) return;
     setEventoId(encontrado.eventoIdLocal);
+    setEventoUuid(encontrado.eventoIdExterno);
     setEventoNombre(encontrado.nombre);
     const navState: NavigationState = {
       screen: "eventoAcciones",
       eventoId: encontrado.eventoIdLocal,
+      eventoUuid: encontrado.eventoIdExterno,
       eventoNombre: encontrado.nombre,
     };
     setScreen("eventoAcciones");
@@ -254,15 +267,18 @@ export default function App() {
   };
 
   const eventosFiltrados = eventos?.filter((ev) =>
-    ev.nombre.toLowerCase().includes(searchTerm.trim().toLowerCase())
+    ev.nombre.toLowerCase().includes(searchTerm.trim().toLowerCase()) ||
+    ev.eventoIdExterno?.toLowerCase().includes(searchTerm.trim().toLowerCase())
   ) ?? [];
 
   const handleSelectEventoFromList = (evento: EventoListItem) => {
     setEventoId(evento.eventoIdLocal);
+    setEventoUuid(evento.eventoIdExterno);
     setEventoNombre(evento.nombre);
     const navState: NavigationState = {
       screen: "eventoAcciones",
       eventoId: evento.eventoIdLocal,
+      eventoUuid: evento.eventoIdExterno,
       eventoNombre: evento.nombre,
     };
     setScreen("eventoAcciones");
@@ -272,6 +288,7 @@ export default function App() {
   const applyNavigationState = (state: NavigationState) => {
     setScreen(state.screen);
     setEventoId(state.eventoId);
+    setEventoUuid(state.eventoUuid);
     setEventoNombre(state.eventoNombre);
   };
 
