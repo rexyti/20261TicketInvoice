@@ -35,9 +35,58 @@ public class RemoteEventCatalogRepositoryAdapter implements EventCatalogReposito
     @Transactional
     public List<EventoFinalizado> findEventosFinalizados() {
         ensureIntegrationTable();
-        return client.getEventosPorEstado(ESTADO_FINALIZADO).stream()
-                .map(evento -> mapper.fromModule1(evento, synchronizeEvent(evento)))
+        try {
+            return client.getEventosPorEstado(ESTADO_FINALIZADO).stream()
+                    .map(evento -> mapper.fromModule1(evento, synchronizeEvent(evento)))
+                    .toList();
+        } catch (RuntimeException ex) {
+            return findEventosFinalizadosFromLocalCache(ex);
+        }
+    }
+
+    private List<EventoFinalizado> findEventosFinalizadosFromLocalCache(RuntimeException cause) {
+        List<EventoFinalizado> eventos = findLocalFinalizados();
+        if (eventos.isEmpty()) {
+            throw cause;
+        }
+        return eventos;
+    }
+
+    private List<EventoFinalizado> findLocalFinalizados() {
+        return entityManager.createNativeQuery("""
+                SELECT e.id,
+                       ee.evento_externo_id,
+                       e.nombre,
+                       ee.fecha_inicio,
+                       ee.fecha_fin,
+                       ee.tipo,
+                       ee.recinto_externo_id,
+                       COALESCE(ee.estado_externo, :estadoFinalizado) AS estado
+                FROM eventos e
+                LEFT JOIN eventos_externos ee ON ee.evento_local_id = e.id
+                WHERE e.estado = :estadoLocal
+                ORDER BY e.id
+                """)
+                .setParameter("estadoFinalizado", ESTADO_FINALIZADO)
+                .setParameter("estadoLocal", ESTADO_LOCAL_CERRADO)
+                .getResultList()
+                .stream()
+                .map(this::toEventoFinalizado)
                 .toList();
+    }
+
+    private EventoFinalizado toEventoFinalizado(Object rowObj) {
+        Object[] row = (Object[]) rowObj;
+        EventoFinalizado evento = new EventoFinalizado();
+        evento.setEventoIdLocal(((Number) row[0]).longValue());
+        evento.setEventoIdExterno(toStringOrNull(row[1]));
+        evento.setNombre(toStringOrNull(row[2]));
+        evento.setFechaInicio(toStringOrNull(row[3]));
+        evento.setFechaFin(toStringOrNull(row[4]));
+        evento.setTipo(toStringOrNull(row[5]));
+        evento.setRecintoIdExterno(toStringOrNull(row[6]));
+        evento.setEstado(toStringOrNull(row[7]));
+        return evento;
     }
 
     private Long synchronizeEvent(Module1EventSummaryDto evento) {
@@ -106,10 +155,10 @@ public class RemoteEventCatalogRepositoryAdapter implements EventCatalogReposito
         entityManager.createNativeQuery("""
                 INSERT INTO eventos_externos (
                     evento_local_id, evento_externo_id, recinto_externo_id, estado_externo,
-                    tipo, fecha_inicio, fecha_fin, fecha_sincronizacion
+                    tipo, tipo_recinto, fecha_inicio, fecha_fin, fecha_sincronizacion
                 )
                 VALUES (
-                    :localId, :externalId, :recintoId, :estado, :tipo, :fechaInicio, :fechaFin,
+                    :localId, :externalId, :recintoId, :estado, :tipo, NULL, :fechaInicio, :fechaFin,
                     CURRENT_TIMESTAMP
                 )
                 ON CONFLICT (evento_externo_id) DO UPDATE
@@ -117,6 +166,7 @@ public class RemoteEventCatalogRepositoryAdapter implements EventCatalogReposito
                     recinto_externo_id = EXCLUDED.recinto_externo_id,
                     estado_externo = EXCLUDED.estado_externo,
                     tipo = EXCLUDED.tipo,
+                    tipo_recinto = COALESCE(eventos_externos.tipo_recinto, EXCLUDED.tipo_recinto),
                     fecha_inicio = EXCLUDED.fecha_inicio,
                     fecha_fin = EXCLUDED.fecha_fin,
                     fecha_sincronizacion = CURRENT_TIMESTAMP
@@ -139,10 +189,15 @@ public class RemoteEventCatalogRepositoryAdapter implements EventCatalogReposito
                     recinto_externo_id VARCHAR(64),
                     estado_externo VARCHAR(32),
                     tipo VARCHAR(64),
+                    tipo_recinto VARCHAR(64),
                     fecha_inicio VARCHAR(64),
                     fecha_fin VARCHAR(64),
                     fecha_sincronizacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
                 )
+                """).executeUpdate();
+        entityManager.createNativeQuery("""
+                ALTER TABLE eventos_externos
+                ADD COLUMN IF NOT EXISTS tipo_recinto VARCHAR(64)
                 """).executeUpdate();
     }
 
@@ -152,5 +207,9 @@ public class RemoteEventCatalogRepositoryAdapter implements EventCatalogReposito
         } catch (NumberFormatException ex) {
             return null;
         }
+    }
+
+    private String toStringOrNull(Object value) {
+        return value == null ? null : String.valueOf(value);
     }
 }

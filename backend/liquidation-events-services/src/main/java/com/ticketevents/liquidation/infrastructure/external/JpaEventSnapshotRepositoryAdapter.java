@@ -2,12 +2,14 @@ package com.ticketevents.liquidation.infrastructure.external;
 
 import com.ticketevents.liquidation.domain.entities.CondicionLiquidacion;
 import com.ticketevents.liquidation.domain.entities.ResumenVentasEvento;
+import com.ticketevents.liquidation.infrastructure.adapter.output.external.dto.Module1EventSnapshotDto;
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class JpaEventSnapshotRepositoryAdapter {
@@ -40,6 +42,11 @@ public class JpaEventSnapshotRepositoryAdapter {
             return null;
         }
 
+        Optional<ResumenVentasEvento> cached = findCachedSnapshot(eventoId, metadata.get());
+        if (cached.isPresent()) {
+            return cached.get();
+        }
+
         String resumenSql = """
                 SELECT t.condicion_liquidacion, COUNT(*), COALESCE(SUM(t.valor_liquidacion),0)
                 FROM tickets t
@@ -49,6 +56,10 @@ public class JpaEventSnapshotRepositoryAdapter {
         var rows = entityManager.createNativeQuery(resumenSql)
                 .setParameter("eventoId", eventoId)
                 .getResultList();
+
+        if (rows.isEmpty()) {
+            return null;
+        }
 
         Map<CondicionLiquidacion, Integer> tickets = new EnumMap<>(CondicionLiquidacion.class);
         Map<CondicionLiquidacion, BigDecimal> recaudo = new EnumMap<>(CondicionLiquidacion.class);
@@ -74,5 +85,121 @@ public class JpaEventSnapshotRepositoryAdapter {
         out.setRecaudoPorCondicion(recaudo);
         out.setTotalRecaudoBruto(total);
         return out;
+    }
+
+    @Transactional
+    public void saveSnapshot(ResumenVentasEvento snapshot) {
+        if (snapshot == null || snapshot.getIdEvento() == null) {
+            return;
+        }
+
+        ensureSnapshotCacheTable();
+        entityManager.createNativeQuery("""
+                DELETE FROM resumen_ventas_cache
+                WHERE evento_id = :eventoId
+                """)
+                .setParameter("eventoId", snapshot.getIdEvento())
+                .executeUpdate();
+
+        for (CondicionLiquidacion condicion : CondicionLiquidacion.values()) {
+            Integer cantidad = snapshot.getTicketsPorCondicion().getOrDefault(condicion, 0);
+            BigDecimal valorTotal = snapshot.getRecaudoPorCondicion().getOrDefault(condicion, BigDecimal.ZERO);
+            entityManager.createNativeQuery("""
+                    INSERT INTO resumen_ventas_cache (
+                        evento_id, condicion_liquidacion, cantidad, valor_total, fecha_sincronizacion
+                    )
+                    VALUES (:eventoId, :condicion, :cantidad, :valorTotal, CURRENT_TIMESTAMP)
+                    """)
+                    .setParameter("eventoId", snapshot.getIdEvento())
+                    .setParameter("condicion", condicion.name())
+                    .setParameter("cantidad", cantidad)
+                    .setParameter("valorTotal", valorTotal)
+                    .executeUpdate();
+        }
+    }
+
+    @Transactional
+    public void updateExternalSnapshotMetadata(Long eventoId, Module1EventSnapshotDto dto) {
+        if (eventoId == null || dto == null) {
+            return;
+        }
+
+        ensureEventosExternosTipoRecintoColumn();
+        entityManager.createNativeQuery("""
+                UPDATE eventos_externos
+                SET recinto_externo_id = COALESCE(:recintoId, recinto_externo_id),
+                    tipo_recinto = COALESCE(:tipoRecinto, tipo_recinto),
+                    fecha_sincronizacion = CURRENT_TIMESTAMP
+                WHERE evento_local_id = :eventoId
+                """)
+                .setParameter("eventoId", eventoId)
+                .setParameter("recintoId", blankToNull(dto.getRecintoId()))
+                .setParameter("tipoRecinto", blankToNull(dto.getTipoRecinto()))
+                .executeUpdate();
+    }
+
+    private Optional<ResumenVentasEvento> findCachedSnapshot(Long eventoId, EventoMetadata metadata) {
+        ensureSnapshotCacheTable();
+        String cacheSql = """
+                SELECT condicion_liquidacion, cantidad, valor_total
+                FROM resumen_ventas_cache
+                WHERE evento_id = :eventoId
+                """;
+        var rows = entityManager.createNativeQuery(cacheSql)
+                .setParameter("eventoId", eventoId)
+                .getResultList();
+
+        if (rows.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Map<CondicionLiquidacion, Integer> tickets = new EnumMap<>(CondicionLiquidacion.class);
+        Map<CondicionLiquidacion, BigDecimal> recaudo = new EnumMap<>(CondicionLiquidacion.class);
+        for (Object rowObj : rows) {
+            Object[] row = (Object[]) rowObj;
+            CondicionLiquidacion condicion = CondicionLiquidacion.valueOf(String.valueOf(row[0]));
+            tickets.put(condicion, ((Number) row[1]).intValue());
+            recaudo.put(condicion, (BigDecimal) row[2]);
+        }
+
+        for (CondicionLiquidacion c : CondicionLiquidacion.values()) {
+            tickets.putIfAbsent(c, 0);
+            recaudo.putIfAbsent(c, BigDecimal.ZERO);
+        }
+
+        BigDecimal total = recaudo.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        ResumenVentasEvento out = new ResumenVentasEvento();
+        out.setIdEvento(eventoId);
+        out.setNombreEvento(metadata.nombre());
+        out.setEstadoEvento(metadata.estado());
+        out.setTicketsPorCondicion(tickets);
+        out.setRecaudoPorCondicion(recaudo);
+        out.setTotalRecaudoBruto(total);
+        return Optional.of(out);
+    }
+
+    private void ensureSnapshotCacheTable() {
+        entityManager.createNativeQuery("""
+                CREATE TABLE IF NOT EXISTS resumen_ventas_cache (
+                    evento_id BIGINT NOT NULL,
+                    condicion_liquidacion VARCHAR(32) NOT NULL,
+                    cantidad INTEGER NOT NULL DEFAULT 0,
+                    valor_total NUMERIC(14,2) NOT NULL DEFAULT 0,
+                    fecha_sincronizacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    PRIMARY KEY (evento_id, condicion_liquidacion)
+                )
+                """).executeUpdate();
+    }
+
+    private void ensureEventosExternosTipoRecintoColumn() {
+        entityManager.createNativeQuery("""
+                ALTER TABLE eventos_externos
+                ADD COLUMN IF NOT EXISTS tipo_recinto VARCHAR(64)
+                """).executeUpdate();
+    }
+
+    private String blankToNull(String value) {
+        return value == null || value.isBlank() ? null : value;
     }
 }

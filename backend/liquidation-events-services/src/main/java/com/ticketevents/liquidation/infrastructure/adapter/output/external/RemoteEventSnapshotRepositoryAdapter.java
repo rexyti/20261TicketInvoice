@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -44,6 +45,7 @@ public class RemoteEventSnapshotRepositoryAdapter implements EventSnapshotReposi
     }
 
     @Override
+    @Transactional
     public ResumenVentasEvento getSnapshot(Long eventoId) {
         Optional<String> externalId = idResolver.resolveEventoExternalId(eventoId);
         if (externalId.isEmpty()) {
@@ -69,6 +71,8 @@ public class RemoteEventSnapshotRepositoryAdapter implements EventSnapshotReposi
             }
             ResumenVentasEvento mapped = mapper.map(dto, eventoId);
             enrichEventMetadata(mapped, eventoId);
+            jpaAdapter.updateExternalSnapshotMetadata(eventoId, dto);
+            jpaAdapter.saveSnapshot(mapped);
             return mapped;
         } catch (BusinessException ex) {
             throw ex;
