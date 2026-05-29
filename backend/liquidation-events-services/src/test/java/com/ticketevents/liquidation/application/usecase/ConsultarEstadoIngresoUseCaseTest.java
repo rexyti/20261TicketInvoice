@@ -38,7 +38,7 @@ class ConsultarEstadoIngresoUseCaseTest {
         
         for (int i = 1; i <= checkeados; i++) {
             registros.add(new RegistroIngreso(
-                (long) i,
+                String.valueOf(i),
                 1L,
                 LocalDateTime.now(),
                 EstadoIngreso.CHECKED_IN,
@@ -48,7 +48,7 @@ class ConsultarEstadoIngresoUseCaseTest {
         
         for (int i = checkeados + 1; i <= checkeados + noAsistieron; i++) {
             registros.add(new RegistroIngreso(
-                (long) i,
+                String.valueOf(i),
                 1L,
                 null,
                 EstadoIngreso.NOT_ATTENDED,
@@ -81,15 +81,22 @@ class ConsultarEstadoIngresoUseCaseTest {
     }
 
     @Test
-    void execute_conEventoNoEncontrado_lanzaExcepcion() {
+    void execute_sinRegistros_retornaEstadoVacio() {
         Long eventoId = 999L;
         
         when(accessControlRepository.getIngresosByEvento(eventoId)).thenReturn(new ArrayList<>());
-        
-        BusinessException exception = assertThrows(BusinessException.class, 
-            () -> useCase.execute(eventoId));
-        
-        assertEquals(ErrorCode.EVENT_NOT_FOUND, exception.getErrorCode());
+        when(mapper.toOutput(eq(eventoId), anyString(), eq(new ArrayList<>()))).thenReturn(
+            new com.ticketevents.liquidation.infrastructure.adapter.output.external.dto.EstadoIngresoDto(
+                eventoId,
+                "Evento #999",
+                new ArrayList<>()
+            )
+        );
+
+        com.ticketevents.liquidation.infrastructure.adapter.output.external.dto.EstadoIngresoDto response = useCase.execute(eventoId);
+
+        assertNotNull(response);
+        assertEquals(eventoId, response.getEventoId());
     }
 
     @Test

@@ -3,6 +3,7 @@ package com.ticketevents.liquidation.integration;
 import com.ticketevents.liquidation.infrastructure.adapter.output.external.Module1HttpClient;
 import com.ticketevents.liquidation.infrastructure.adapter.output.external.Module1MappingProperties;
 import com.ticketevents.liquidation.infrastructure.adapter.output.external.dto.Module1EventSnapshotDto;
+import com.ticketevents.liquidation.shared.errors.BusinessException;
 import com.ticketevents.liquidation.shared.errors.TechnicalException;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Tag;
@@ -23,7 +24,7 @@ class Module1LiveIntegrationTest {
             "https://uncoated-unfixed-imaginary.ngrok-free.dev");
     private static final String EVENTO_UUID = System.getProperty(
             "module1.evento-uuid",
-            "b7fd05e3-1087-4b6d-818d-96a1a38e0e5b");
+            "00016ec5-90fb-4c63-aba9-3ea17abd27c0");
 
     @Test
     void module1SnapshotEndpointIsReachable() {
@@ -38,6 +39,8 @@ class Module1LiveIntegrationTest {
                     "Module1 snapshot has no condiciones");
         } catch (TechnicalException ex) {
             Assumptions.abort("Module1 unavailable (tunnel offline or network error): " + ex.getMessage());
+        } catch (BusinessException ex) {
+            Assumptions.abort("Module1 live event is not available: " + ex.getMessage());
         } catch (HttpClientErrorException ex) {
             String body = ex.getResponseBodyAsString();
             if (body != null && body.contains("ERR_NGROK")) {

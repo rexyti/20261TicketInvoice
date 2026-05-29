@@ -41,9 +41,8 @@ public class ConsultarEstadoIngresoUseCase {
             throw new TechnicalException(ErrorCode.EXTERNAL_SERVICE_UNAVAILABLE, e);
         }
 
-        if (registros == null || registros.isEmpty()) {
-            throw new BusinessException(ErrorCode.EVENT_NOT_FOUND,
-                    "No se encontraron registros de ingreso para el evento");
+        if (registros == null) {
+            registros = List.of();
         }
 
         for (RegistroIngreso reg : registros) {
@@ -51,7 +50,7 @@ public class ConsultarEstadoIngresoUseCase {
                 throw new TechnicalException(ErrorCode.INVALID_REQUEST,
                         "Registro nulo encontrado en la lista de ingresos");
             }
-            if (reg.getIdTicket() == null || reg.getIdTicket() <= 0) {
+            if (reg.getIdTicket() == null || reg.getIdTicket().isBlank()) {
                 throw new TechnicalException(ErrorCode.INVALID_REQUEST,
                         "Registro con ID de ticket invalido");
             }

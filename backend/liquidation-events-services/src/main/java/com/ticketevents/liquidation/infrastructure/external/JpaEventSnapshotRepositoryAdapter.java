@@ -2,7 +2,9 @@ package com.ticketevents.liquidation.infrastructure.external;
 
 import com.ticketevents.liquidation.domain.entities.CondicionLiquidacion;
 import com.ticketevents.liquidation.domain.entities.ResumenVentasEvento;
+import com.ticketevents.liquidation.infrastructure.adapter.output.external.dto.CondicionDto;
 import com.ticketevents.liquidation.infrastructure.adapter.output.external.dto.Module1EventSnapshotDto;
+import com.ticketevents.liquidation.infrastructure.adapter.output.external.dto.TicketDto;
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.util.EnumMap;
@@ -128,14 +130,60 @@ public class JpaEventSnapshotRepositoryAdapter {
         entityManager.createNativeQuery("""
                 UPDATE eventos_externos
                 SET recinto_externo_id = COALESCE(:recintoId, recinto_externo_id),
+                    nombre_recinto = COALESCE(:nombreRecinto, nombre_recinto),
                     tipo_recinto = COALESCE(:tipoRecinto, tipo_recinto),
                     fecha_sincronizacion = CURRENT_TIMESTAMP
                 WHERE evento_local_id = :eventoId
                 """)
                 .setParameter("eventoId", eventoId)
                 .setParameter("recintoId", blankToNull(dto.getRecintoId()))
+                .setParameter("nombreRecinto", blankToNull(dto.getNombreRecinto()))
                 .setParameter("tipoRecinto", blankToNull(dto.getTipoRecinto()))
                 .executeUpdate();
+
+        saveExternalTickets(eventoId, dto);
+    }
+
+    @Transactional
+    public void saveExternalTickets(Long eventoId, Module1EventSnapshotDto dto) {
+        if (eventoId == null || dto == null || dto.getCondiciones() == null) {
+            return;
+        }
+
+        ensureExternalTicketsTable();
+        entityManager.createNativeQuery("""
+                DELETE FROM evento_tickets_externos
+                WHERE evento_id = :eventoId
+                """)
+                .setParameter("eventoId", eventoId)
+                .executeUpdate();
+
+        for (CondicionDto condicion : dto.getCondiciones()) {
+            if (condicion == null || condicion.getTickets() == null) {
+                continue;
+            }
+            String condicionNormalizada = condicion.getCondicion() == null ? "VENDIDO" : condicion.getCondicion();
+            for (TicketDto ticket : condicion.getTickets()) {
+                if (ticket == null || ticket.getTicketId() == null || ticket.getTicketId().isBlank()) {
+                    continue;
+                }
+                entityManager.createNativeQuery("""
+                        INSERT INTO evento_tickets_externos (
+                            evento_id, ticket_externo_id, condicion_liquidacion, precio, fecha_sincronizacion
+                        )
+                        VALUES (:eventoId, :ticketId, :condicion, :precio, CURRENT_TIMESTAMP)
+                        ON CONFLICT (evento_id, ticket_externo_id) DO UPDATE
+                        SET condicion_liquidacion = EXCLUDED.condicion_liquidacion,
+                            precio = EXCLUDED.precio,
+                            fecha_sincronizacion = CURRENT_TIMESTAMP
+                        """)
+                        .setParameter("eventoId", eventoId)
+                        .setParameter("ticketId", ticket.getTicketId())
+                        .setParameter("condicion", condicionNormalizada)
+                        .setParameter("precio", ticket.getPrecio() != null ? ticket.getPrecio() : BigDecimal.ZERO)
+                        .executeUpdate();
+            }
+        }
     }
 
     private Optional<ResumenVentasEvento> findCachedSnapshot(Long eventoId, EventoMetadata metadata) {
@@ -192,10 +240,27 @@ public class JpaEventSnapshotRepositoryAdapter {
                 """).executeUpdate();
     }
 
+    private void ensureExternalTicketsTable() {
+        entityManager.createNativeQuery("""
+                CREATE TABLE IF NOT EXISTS evento_tickets_externos (
+                    evento_id BIGINT NOT NULL,
+                    ticket_externo_id VARCHAR(64) NOT NULL,
+                    condicion_liquidacion VARCHAR(32) NOT NULL,
+                    precio NUMERIC(14,2) NOT NULL DEFAULT 0,
+                    fecha_sincronizacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    PRIMARY KEY (evento_id, ticket_externo_id)
+                )
+                """).executeUpdate();
+    }
+
     private void ensureEventosExternosTipoRecintoColumn() {
         entityManager.createNativeQuery("""
                 ALTER TABLE eventos_externos
                 ADD COLUMN IF NOT EXISTS tipo_recinto VARCHAR(64)
+                """).executeUpdate();
+        entityManager.createNativeQuery("""
+                ALTER TABLE eventos_externos
+                ADD COLUMN IF NOT EXISTS nombre_recinto VARCHAR(255)
                 """).executeUpdate();
     }
 

@@ -104,7 +104,7 @@ export function EventoDetailPage({ evento, onBack }: EventoDetailPageProps) {
             </div>
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-8 text-center">
               <p className="text-blue-700 font-semibold">Funcionalidad en desarrollo</p>
-              <p className="text-sm text-blue-600 mt-2">Este paso consultará el tipo de recinto desde el Módulo 1</p>
+              <p className="text-sm text-blue-600 mt-2">Este paso consultara la informacion del recinto asociado.</p>
             </div>
           </div>
         );

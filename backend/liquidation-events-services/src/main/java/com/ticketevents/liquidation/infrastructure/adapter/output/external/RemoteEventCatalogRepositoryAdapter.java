@@ -155,10 +155,10 @@ public class RemoteEventCatalogRepositoryAdapter implements EventCatalogReposito
         entityManager.createNativeQuery("""
                 INSERT INTO eventos_externos (
                     evento_local_id, evento_externo_id, recinto_externo_id, estado_externo,
-                    tipo, tipo_recinto, fecha_inicio, fecha_fin, fecha_sincronizacion
+                    tipo, nombre_recinto, tipo_recinto, fecha_inicio, fecha_fin, fecha_sincronizacion
                 )
                 VALUES (
-                    :localId, :externalId, :recintoId, :estado, :tipo, NULL, :fechaInicio, :fechaFin,
+                    :localId, :externalId, :recintoId, :estado, :tipo, :nombreRecinto, NULL, :fechaInicio, :fechaFin,
                     CURRENT_TIMESTAMP
                 )
                 ON CONFLICT (evento_externo_id) DO UPDATE
@@ -166,6 +166,7 @@ public class RemoteEventCatalogRepositoryAdapter implements EventCatalogReposito
                     recinto_externo_id = EXCLUDED.recinto_externo_id,
                     estado_externo = EXCLUDED.estado_externo,
                     tipo = EXCLUDED.tipo,
+                    nombre_recinto = COALESCE(EXCLUDED.nombre_recinto, eventos_externos.nombre_recinto),
                     tipo_recinto = COALESCE(eventos_externos.tipo_recinto, EXCLUDED.tipo_recinto),
                     fecha_inicio = EXCLUDED.fecha_inicio,
                     fecha_fin = EXCLUDED.fecha_fin,
@@ -176,6 +177,7 @@ public class RemoteEventCatalogRepositoryAdapter implements EventCatalogReposito
                 .setParameter("recintoId", evento.getRecintoId())
                 .setParameter("estado", evento.getEstado())
                 .setParameter("tipo", evento.getTipo())
+                .setParameter("nombreRecinto", blankToNull(evento.getNombreRecinto()))
                 .setParameter("fechaInicio", evento.getFechaInicio())
                 .setParameter("fechaFin", evento.getFechaFin())
                 .executeUpdate();
@@ -187,6 +189,7 @@ public class RemoteEventCatalogRepositoryAdapter implements EventCatalogReposito
                     evento_local_id BIGINT PRIMARY KEY,
                     evento_externo_id VARCHAR(64) NOT NULL UNIQUE,
                     recinto_externo_id VARCHAR(64),
+                    nombre_recinto VARCHAR(255),
                     estado_externo VARCHAR(32),
                     tipo VARCHAR(64),
                     tipo_recinto VARCHAR(64),
@@ -198,6 +201,10 @@ public class RemoteEventCatalogRepositoryAdapter implements EventCatalogReposito
         entityManager.createNativeQuery("""
                 ALTER TABLE eventos_externos
                 ADD COLUMN IF NOT EXISTS tipo_recinto VARCHAR(64)
+                """).executeUpdate();
+        entityManager.createNativeQuery("""
+                ALTER TABLE eventos_externos
+                ADD COLUMN IF NOT EXISTS nombre_recinto VARCHAR(255)
                 """).executeUpdate();
     }
 
@@ -211,5 +218,9 @@ public class RemoteEventCatalogRepositoryAdapter implements EventCatalogReposito
 
     private String toStringOrNull(Object value) {
         return value == null ? null : String.valueOf(value);
+    }
+
+    private String blankToNull(String value) {
+        return value == null || value.isBlank() ? null : value;
     }
 }

@@ -13,6 +13,7 @@ const EVENTOS_KEYS = {
   resumenVentas: (eventoId: number) => [...EVENTOS_KEYS.all, "resumen-ventas", eventoId] as const,
   estadoIngreso: (eventoId: number) => [...EVENTOS_KEYS.all, "estado-ingreso", eventoId] as const,
   ingresos: (eventoId: number) => [...EVENTOS_KEYS.all, "ingresos", eventoId] as const,
+  recintoEvento: (eventoId: number) => [...EVENTOS_KEYS.all, "recinto-evento", eventoId] as const,
   recinto: (recintoId: number) => [...EVENTOS_KEYS.all, "recinto", recintoId] as const,
   configuracionLiquidacion: (eventoId: number) => [...EVENTOS_KEYS.all, "configuracion-liquidacion", eventoId] as const,
   comisionRecinto: (recintoId: number) => [...EVENTOS_KEYS.all, "comision-recinto", recintoId] as const,
@@ -85,6 +86,27 @@ export function useIngresosTickets(eventoId?: number) {
     queryFn: async () => {
       if (!eventoId) throw new Error("eventoId es requerido");
       return api.get(`eventos/${eventoId}/ingresos`).json<IngresosResponse>();
+    },
+    enabled: Boolean(eventoId),
+    retry: false,
+  });
+}
+
+export interface RecintoEventoResponse {
+  eventoIdLocal: number;
+  eventoIdExterno: string;
+  recintoIdExterno: string;
+  nombreRecinto: string;
+  tipoRecinto: string;
+  estado: string;
+}
+
+export function useRecintoEvento(eventoId?: number) {
+  return useQuery<RecintoEventoResponse>({
+    queryKey: eventoId ? EVENTOS_KEYS.recintoEvento(eventoId) : ["disabled"],
+    queryFn: async () => {
+      if (!eventoId) throw new Error("eventoId es requerido");
+      return api.get(`eventos/${eventoId}/recinto`).json<RecintoEventoResponse>();
     },
     enabled: Boolean(eventoId),
     retry: false,

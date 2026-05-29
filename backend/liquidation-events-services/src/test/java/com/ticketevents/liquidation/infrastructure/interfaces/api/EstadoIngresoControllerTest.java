@@ -38,7 +38,7 @@ class EstadoIngresoControllerTest {
     void consultarEstadoIngreso_conEventoExistente_retorna200() throws Exception {
         Long eventoId = 1L;
         EstadoIngresoDto dto = new EstadoIngresoDto(eventoId, "Concierto Rock 2026",
-                List.of(new EstadoIngresoDto.RegistroIngresoDTO(1L, eventoId, "2026-05-07T10:00:00", "CHECKED_IN", "INGRESO")));
+                List.of(new EstadoIngresoDto.RegistroIngresoDTO("1", eventoId, "2026-05-07T10:00:00", "CHECKED_IN", "INGRESO")));
         ConsultarEstadoIngresoResponse response = new ConsultarEstadoIngresoResponse();
         response.setEventoId(eventoId);
         response.setNombreEvento("Concierto Rock 2026");

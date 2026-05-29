@@ -42,7 +42,7 @@ public class ConsultarEstadoIngresoResponse {
     @Schema(description = "Estado de ingreso de un ticket individual")
     public static class TicketEstadoIngreso {
         @Schema(description = "ID del ticket", example = "1")
-        private Long idTicket;
+        private String idTicket;
 
         @Schema(description = "Código del ticket", example = "TKT-1")
         private String codigoTicket;
@@ -55,8 +55,8 @@ public class ConsultarEstadoIngresoResponse {
 
         public TicketEstadoIngreso() {}
 
-        public Long getIdTicket() { return idTicket; }
-        public void setIdTicket(Long idTicket) { this.idTicket = idTicket; }
+        public String getIdTicket() { return idTicket; }
+        public void setIdTicket(String idTicket) { this.idTicket = idTicket; }
         public String getCodigoTicket() { return codigoTicket; }
         public void setCodigoTicket(String codigoTicket) { this.codigoTicket = codigoTicket; }
         public String getEstadoIngreso() { return estadoIngreso; }
