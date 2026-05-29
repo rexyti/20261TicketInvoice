@@ -3,7 +3,7 @@ package com.ticketevents.liquidation.domain.entities;
 import java.time.LocalDateTime;
 
 public class RegistroIngreso {
-    private Long idTicket;
+    private String idTicket;
     private Long idEvento;
     private LocalDateTime fechaHoraIngreso;
     private EstadoIngreso estadoIngreso;
@@ -11,10 +11,10 @@ public class RegistroIngreso {
 
     public RegistroIngreso() {}
 
-    public RegistroIngreso(Long idTicket, Long idEvento, LocalDateTime fechaHoraIngreso, 
+    public RegistroIngreso(String idTicket, Long idEvento, LocalDateTime fechaHoraIngreso,
                           EstadoIngreso estadoIngreso, String tipoAcceso) {
-        if (idTicket == null || idTicket <= 0) {
-            throw new IllegalArgumentException("El ID del ticket debe ser positivo");
+        if (idTicket == null || idTicket.isBlank()) {
+            throw new IllegalArgumentException("El ID del ticket es requerido");
         }
         if (idEvento == null || idEvento <= 0) {
             throw new IllegalArgumentException("El ID del evento debe ser positivo");
@@ -39,8 +39,8 @@ public class RegistroIngreso {
         this.tipoAcceso = tipoAcceso;
     }
 
-    public Long getIdTicket() { return idTicket; }
-    public void setIdTicket(Long idTicket) { this.idTicket = idTicket; }
+    public String getIdTicket() { return idTicket; }
+    public void setIdTicket(String idTicket) { this.idTicket = idTicket; }
     public Long getIdEvento() { return idEvento; }
     public void setIdEvento(Long idEvento) { this.idEvento = idEvento; }
     public LocalDateTime getFechaHoraIngreso() { return fechaHoraIngreso; }

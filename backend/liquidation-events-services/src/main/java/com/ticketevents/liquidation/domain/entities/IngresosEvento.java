@@ -28,26 +28,37 @@ public class IngresosEvento {
     }
 
     public void agregarTicket(EstadoFinanciero estado, BigDecimal valor) {
+        agregarTickets(estado, 1, valor);
+    }
+
+    public void agregarTickets(EstadoFinanciero estado, int cantidad, BigDecimal valorTotal) {
         if (estado == null) {
             this.hasInconsistencies = true;
             return;
         }
+        if (cantidad <= 0) {
+            return;
+        }
+        BigDecimal valor = valorTotal == null ? BigDecimal.ZERO : valorTotal;
 
-        ticketsPorEstado.put(estado, ticketsPorEstado.getOrDefault(estado, 0) + 1);
+        ticketsPorEstado.put(estado, ticketsPorEstado.getOrDefault(estado, 0) + cantidad);
 
         switch (estado) {
             case VALIDADO -> {
-                totalTicketsValidados++;
+                totalTicketsValidados += cantidad;
                 totalRecaudoBruto = totalRecaudoBruto.add(valor);
             }
-            case NO_ASISTIO -> totalNoAsistieron++;
-            case CORTESIA -> totalCortesias++;
-            case CANCELADO -> totalTicketsCancelados++;
+            case VENDIDO, NO_ASISTIO -> {
+                totalNoAsistieron += cantidad;
+                totalRecaudoBruto = totalRecaudoBruto.add(valor);
+            }
+            case CORTESIA -> {
+                totalCortesias += cantidad;
+                totalRecaudoBruto = totalRecaudoBruto.add(valor);
+            }
+            case CANCELADO -> totalTicketsCancelados += cantidad;
         }
-        totalTicketsVendidos++;
-        if (estado == EstadoFinanciero.CORTESIA) {
-            totalRecaudoBruto = totalRecaudoBruto.add(valor);
-        }
+        totalTicketsVendidos += cantidad;
     }
 
     public void validar() {

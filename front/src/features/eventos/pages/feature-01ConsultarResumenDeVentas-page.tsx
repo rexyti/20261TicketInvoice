@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CheckCircle2, ChevronDown, Download, Search } from "lucide-react";
+import { CheckCircle2, Download, Search } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { BackendNotConnectedModal } from "@/shared/ui/backend-not-connected-modal";
 
@@ -13,7 +13,7 @@ interface RowResumen {
 }
 
 interface ResumenEventoData {
-  snapshotId: string;
+  resumenId: string;
   fechaEvento: string;
   estadoEvento: string;
   metricas: {
@@ -48,16 +48,7 @@ export function Feature01ConsultarResumenDeVentasPage({ onBack, evento, resumen 
             <Search className="w-7 h-7" />
             <input className="w-full bg-transparent text-xl placeholder:text-[#211c34]/80 outline-none" placeholder="Buscar evento por ID o nombre..." />
           </label>
-          <div>
-            <p className="text-lg text-[#6f6990] font-semibold mb-2">Origen del resumen</p>
-            <button
-              className="w-full h-14 rounded-xl bg-[#ece9f5] px-5 text-xl text-left text-[#211c34] flex items-center justify-between"
-              onClick={() => setShowNotConnectedModal(true)}
-            >
-              Snapshot de evento
-              <ChevronDown className="w-6 h-6" />
-            </button>
-          </div>
+          <div />
           <Button className="h-14 px-7 rounded-xl bg-[#6351a0] text-[#f2effa] text-xl font-semibold" onClick={() => setShowNotConnectedModal(true)}>
             <Download className="w-6 h-6" />
             Exportar Resumen
@@ -70,13 +61,13 @@ export function Feature01ConsultarResumenDeVentasPage({ onBack, evento, resumen 
           <Button onClick={onBack} variant="ghost" className="text-[#4f4474] hover:bg-[#d8d2e8]">Volver al indice</Button>
         </div>
         <p className="text-2xl font-semibold text-[#787296] uppercase">
-          Resumen de ventas del evento · Snapshot financiero #{resumen.snapshotId}
+          Resumen de ventas del evento
         </p>
         <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="text-6xl font-semibold">{evento.nombre}</h1>
             <p className="mt-4 text-2xl text-[#6f6990]">
-              ID Evento: #{evento.id} | Fecha evento: {resumen.fechaEvento} | Estado evento: {resumen.estadoEvento}
+              ID Evento: {evento.id} | Fecha evento: {resumen.fechaEvento} | Estado evento: {resumen.estadoEvento}
             </p>
           </div>
           <div className="h-16 px-6 rounded-full bg-[#2f914a] text-[#eaf8ee] text-2xl font-semibold flex items-center gap-3">
@@ -105,7 +96,7 @@ export function Feature01ConsultarResumenDeVentasPage({ onBack, evento, resumen 
             <div>
               <p className="text-2xl font-semibold text-[#716a8f]">INSUMO PRINCIPAL</p>
               <p className="text-4xl font-semibold mt-3">Base financiera disponible para distribucion del recaudo</p>
-              <p className="text-2xl mt-3 text-[#6f6990]">Este snapshot alimenta el calculo de liquidacion y bloquea modificaciones manuales sobre los ingresos.</p>
+              <p className="text-2xl mt-3 text-[#6f6990]">Esta informacion alimenta el calculo de liquidacion y bloquea modificaciones manuales sobre los ingresos.</p>
             </div>
             <p className="text-6xl text-[#6051a0] font-semibold">{resumen.metricas.totalRecaudado}</p>
           </div>
@@ -116,7 +107,7 @@ export function Feature01ConsultarResumenDeVentasPage({ onBack, evento, resumen 
         <div className="overflow-hidden rounded-xl border border-[#d8d4e6] bg-[#f3f1f8] text-[#1f1a37]">
           <div className="px-6 py-5 border-b border-[#dfdbea]">
             <h3 className="text-3xl font-semibold">Detalle por condicion de liquidacion</h3>
-            <p className="text-xl text-[#6f6990] mt-2">Conteos recibidos desde el modulo de gestion de recintos e inventario de aforo</p>
+            <p className="text-xl text-[#6f6990] mt-2">Conteos consolidados para el proceso de liquidacion</p>
           </div>
           <table className="w-full">
             <thead className="bg-[#ece9f5] text-[#6f6990]">

@@ -23,7 +23,7 @@ public class EstadoIngresoDto {
     public void setRegistros(List<RegistroIngresoDTO> registros) { this.registros = registros; }
 
     public static class RegistroIngresoDTO {
-        private Long idTicket;
+        private String idTicket;
         private Long idEvento;
         private String fechaHoraIngreso;
         private String estadoIngreso;
@@ -31,7 +31,7 @@ public class EstadoIngresoDto {
 
         public RegistroIngresoDTO() {}
 
-        public RegistroIngresoDTO(Long idTicket, Long idEvento, String fechaHoraIngreso,
+        public RegistroIngresoDTO(String idTicket, Long idEvento, String fechaHoraIngreso,
                                   String estadoIngreso, String tipoAcceso) {
             this.idTicket = idTicket;
             this.idEvento = idEvento;
@@ -40,8 +40,8 @@ public class EstadoIngresoDto {
             this.tipoAcceso = tipoAcceso;
         }
 
-        public Long getIdTicket() { return idTicket; }
-        public void setIdTicket(Long idTicket) { this.idTicket = idTicket; }
+        public String getIdTicket() { return idTicket; }
+        public void setIdTicket(String idTicket) { this.idTicket = idTicket; }
         public Long getIdEvento() { return idEvento; }
         public void setIdEvento(Long idEvento) { this.idEvento = idEvento; }
         public String getFechaHoraIngreso() { return fechaHoraIngreso; }

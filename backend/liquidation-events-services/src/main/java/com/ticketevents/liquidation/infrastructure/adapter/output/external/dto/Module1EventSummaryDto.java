@@ -7,6 +7,7 @@ public class Module1EventSummaryDto {
     private String fechaFin;
     private String tipo;
     private String recintoId;
+    private String nombreRecinto;
     private String estado;
     private boolean reingresoHabilitado;
 
@@ -22,6 +23,8 @@ public class Module1EventSummaryDto {
     public void setTipo(String tipo) { this.tipo = tipo; }
     public String getRecintoId() { return recintoId; }
     public void setRecintoId(String recintoId) { this.recintoId = recintoId; }
+    public String getNombreRecinto() { return nombreRecinto; }
+    public void setNombreRecinto(String nombreRecinto) { this.nombreRecinto = nombreRecinto; }
     public String getEstado() { return estado; }
     public void setEstado(String estado) { this.estado = estado; }
     public boolean isReingresoHabilitado() { return reingresoHabilitado; }

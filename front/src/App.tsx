@@ -4,9 +4,12 @@ import { AppLayout } from "@/shared/layout/AppLayout";
 import { Feature01ConsultarResumenDeVentasPage } from "@/features/eventos/pages/feature-01ConsultarResumenDeVentas-page";
 import type { ResumenEventoData } from "@/features/eventos/pages/feature-01ConsultarResumenDeVentas-page";
 import { Feature02ConsultarEstadoIngresoPage } from "@/features/eventos/pages/feature-02ConsultarEstadoIngreso-page";
+import { Feature03InformarTipoDeRecintoPage } from "@/features/eventos/pages/feature-03InformarTipoDeRecinto-page";
+import type { TipoRecintoEventoData } from "@/features/eventos/pages/feature-03InformarTipoDeRecinto-page";
 import { Feature04ConsultarIngresosTicketsPage } from "@/features/eventos/pages/feature-04ConsultarIngresosTickets-page";
-import { useEventos, useResumenVentas, useEstadoIngreso, useIngresosTickets } from "@/features/eventos/api/eventos.api";
+import { useEventos, useResumenVentas, useEstadoIngreso, useIngresosTickets, useRecintoEvento } from "@/features/eventos/api/eventos.api";
 import type { EventoListItem } from "@/features/eventos/api/eventos.api";
+import type { RecintoEventoResponse } from "@/features/eventos/api/eventos.api";
 import type { ResumenVentasResponse, EstadoIngresoResponse, IngresosResponse } from "@/features/eventos/models/eventos.types";
 import { Button } from "@/shared/ui/button";
 import { Card } from "@/shared/ui/card";
@@ -16,7 +19,7 @@ type Screen =
   | "eventoAcciones"
   | "consultarResumenDeVentas"
   | "consultarEstadoIngreso"
-  | "informarTipoRecinto"
+  | "consultarTipoRecinto"
   | "consultarIngresosTickets"
   | "determinarTipoLiquidacionFinal"
   | "registrarValorComisionRecinto"
@@ -44,7 +47,7 @@ function mapApiResumenToUI(data: ResumenVentasResponse, eventoId: number): Resum
   const cancelValor = rec["CANCELADO"] ?? 0;
 
   return {
-    snapshotId: `API-${eventoId}`,
+    resumenId: String(eventoId),
     fechaEvento: new Date().toLocaleDateString("es-CO"),
     estadoEvento: data.estadoEvento ?? "N/A",
     metricas: {
@@ -78,11 +81,12 @@ function mapApiEstadoIngresoToUI(data: EstadoIngresoResponse, eventoId: number) 
   const totalNoAsistieron = (data as unknown as { totalNoAsistieron?: number }).totalNoAsistieron ?? 0;
 
   const checkedIn = ticketsList.filter((t: TicketEstadoIngreso) => t.estadoIngreso === "CHECKED_IN").length;
-  const noCheckin = ticketsList.filter((t: TicketEstadoIngreso) => t.estadoIngreso === "NO_CHECKIN").length;
+  const noCheckin = ticketsList.filter((t: TicketEstadoIngreso) => t.estadoIngreso === "NO_CHECKIN" || t.estadoIngreso === "NOT_ATTENDED").length;
   const noInfo = ticketsList.filter((t: TicketEstadoIngreso) => t.estadoIngreso === "NO_INFO" || (!t.estadoIngreso)).length;
+  const coberturaConsulta = totalTickets > 0 ? "100%" : "0%";
 
   return {
-    controlId: `API-${eventoId}`,
+    controlId: String(eventoId),
     fechaEvento: new Date().toLocaleDateString("es-CO"),
     estadoEvento: "N/A",
     metricas: {
@@ -90,7 +94,7 @@ function mapApiEstadoIngresoToUI(data: EstadoIngresoResponse, eventoId: number) 
       checkinRealizado: String(totalCheckeados),
       sinCheckin: String(totalNoAsistieron),
       sinInformacionIngreso: String(noInfo),
-      coberturaConsulta: totalTickets > 0 ? "100%" : "0%",
+      coberturaConsulta,
       totalProcesado: String(totalTickets),
     },
     rows: [
@@ -123,7 +127,7 @@ function mapApiEstadoIngresoToUI(data: EstadoIngresoResponse, eventoId: number) 
         descripcion: "Total de tickets con estado de ingreso valido para la liquidacion",
         tickets: String(totalTickets),
         usoFinanciero: "Listo para calculo",
-        resultado: "100% cobertura",
+        resultado: `${coberturaConsulta} cobertura`,
         total: true,
       },
     ],
@@ -141,7 +145,7 @@ function mapApiIngresosToUI(data: IngresosResponse, eventoId: number) {
   const fmt = (n: number) => `$ ${n.toLocaleString("es-CO")}`;
 
   return {
-    resumenId: `API-${eventoId}`,
+    resumenId: String(eventoId),
     estadoEvento: "N/A",
     estadoLiquidacion: "Pendiente",
     metricas: {
@@ -159,6 +163,35 @@ function getApiError(error: unknown): string | null {
   if (!error) return null;
   if (error instanceof Error) return error.message;
   return "Error al consultar el servicio externo";
+}
+
+function mapApiRecintoToUI(data: RecintoEventoResponse): TipoRecintoEventoData {
+  return {
+    recintoId: data.recintoIdExterno ?? "No sincronizado",
+    estadoRecinto: data.estado ?? "SIN_ESTADO",
+    ciudad: "No informado",
+    ultimaModificacion: new Date().toLocaleDateString("es-CO"),
+    eventosAsociados: "1",
+    recintoNombre: data.nombreRecinto ?? "Recinto sin nombre",
+    consultaPlaceholder: "Buscar recinto por UUID o nombre...",
+    ctaLabel: "Actualizar consulta",
+    badgeLabel: "Informacion disponible",
+    tipoLabel: data.tipoRecinto ?? "No informado",
+    tasaLabel: "Pendiente",
+    aplicacionLabel: "Disponible para liquidacion",
+    alertaTitulo: "Tipo de recinto consultado",
+    alertaDescripcion: "La informacion del recinto esta disponible para continuar con la liquidacion.",
+    rightTitle: "",
+    rightDescription: "",
+    functionalRequirements: "",
+    tableHeaders: ["Dato", "Estado", "Valor"],
+    rows: [
+      { control: "UUID recinto", estado: "Disponible", accion: data.recintoIdExterno ?? "N/A" },
+      { control: "Nombre recinto", estado: "Disponible", accion: data.nombreRecinto ?? "N/A" },
+      { control: "Tipo recinto", estado: "Disponible", accion: data.tipoRecinto ?? "N/A" },
+    ],
+    escenario: "exitoso",
+  };
 }
 
 function formatUuid(uuid?: string | null): string {
@@ -183,10 +216,7 @@ function ServiceUnavailable({ error, onBack }: { error: string | null; onBack: (
       <div className="text-center max-w-xl">
         <p className="text-2xl text-red-600 font-semibold">Servicio externo no disponible</p>
         <p className="mt-3 text-lg text-[#6f6990]">
-          {error ?? "No se pudo conectar con el módulo externo de gestión de recintos. Verifique que el servicio esté disponible e intente nuevamente."}
-        </p>
-        <p className="mt-2 text-sm text-[#9a94b0]">
-          Endpoint: <code className="bg-[#f0eef5] px-2 py-0.5 rounded text-[#6351a0]">{window.location.pathname}</code>
+          {error ?? "No se pudo completar la consulta. Verifique que el servicio esté disponible e intente nuevamente."}
         </p>
         <button onClick={onBack} className="mt-6 text-[#6351a0] underline text-lg">Volver</button>
       </div>
@@ -200,7 +230,7 @@ function FeatureNotImplemented({ onBack }: { onBack: () => void }) {
       <div className="text-center max-w-xl">
         <p className="text-2xl text-[#6f6990] font-semibold">Funcionalidad en desarrollo</p>
         <p className="mt-3 text-lg text-[#9a94b0]">
-          Esta funcionalidad se conectará al backend cuando esté disponible. Por ahora no hay datos mockeados.
+          Esta funcionalidad estara disponible cuando se complete su implementacion.
         </p>
         <button onClick={onBack} className="mt-6 text-[#6351a0] underline text-lg">Volver</button>
       </div>
@@ -228,10 +258,14 @@ export default function App() {
   const { data: apiIngresos, isLoading: ingresosLoading, error: ingresosError } = useIngresosTickets(
     screen === "consultarIngresosTickets" ? eventoId ?? undefined : undefined,
   );
+  const { data: apiRecinto, isLoading: recintoLoading, error: recintoError } = useRecintoEvento(
+    screen === "consultarTipoRecinto" ? eventoId ?? undefined : undefined,
+  );
 
   const apiResumenErrorMsg = getApiError(apiResumenError);
   const apiEstadoIngresoErrorMsg = getApiError(estadoIngresoError);
   const apiIngresosErrorMsg = getApiError(ingresosError);
+  const apiRecintoErrorMsg = getApiError(recintoError);
 
   const navigateTo = (nextScreen: Screen) => {
     const navState: NavigationState = {
@@ -315,7 +349,7 @@ export default function App() {
             <div className="px-8 md:px-12 py-10">
               <h1 className="text-4xl font-semibold text-[#1f1a37] mb-2">Módulo de Liquidación</h1>
               <p className="text-lg text-[#6f6990] mb-8">
-                Los eventos se consultan desde el módulo externo de gestión de recintos.
+                Selecciona un evento finalizado para iniciar el proceso de liquidacion.
               </p>
 
               {eventosLoading ? (
@@ -329,7 +363,7 @@ export default function App() {
                         type="text"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="Buscar evento por nombre..."
+                        placeholder="Buscar evento por nombre o UUID..."
                         className="w-full bg-transparent text-lg placeholder:text-[#6f6990] outline-none text-[#1f1a37]"
                       />
                     </label>
@@ -346,7 +380,9 @@ export default function App() {
                           <div className="flex items-start justify-between gap-4">
                             <div>
                               <h2 className="text-xl font-semibold text-[#1f1a37]">{evento.nombre}</h2>
-                              <p className="text-sm text-[#6f6990] mt-1">ID: {evento.eventoIdLocal} · {evento.fechaInicio} · {evento.tipo}</p>
+                              <p className="text-sm text-[#6f6990] mt-1">
+                                ID evento: {formatUuid(evento.eventoIdExterno)} - {evento.fechaInicio} - {evento.tipo}
+                              </p>
                             </div>
                             <span className="px-3 py-1 rounded-full text-sm font-semibold bg-[#e5f6ea] text-[#166534]">{evento.estado}</span>
                           </div>
@@ -384,7 +420,7 @@ export default function App() {
               </Button>
 
               <h1 className="text-3xl font-semibold text-[#1f1a37]">{eventoNombre ?? `Evento #${eventoId}`}</h1>
-              <p className="text-[#6f6990] mt-2">ID: {eventoId}</p>
+              <p className="text-[#6f6990] mt-2">ID evento: {eventoUuid ?? "No sincronizado"}</p>
 
               <div className="mt-8">
                 <p className="text-lg text-[#6f6990] mb-4">Selecciona una accion</p>
@@ -395,8 +431,8 @@ export default function App() {
                   <Button className="justify-start bg-[#6351a0] hover:opacity-95" onClick={() => navigateTo("consultarEstadoIngreso")}>
                     Estado de ingreso
                   </Button>
-                  <Button className="justify-start bg-[#6351a0] hover:opacity-95" onClick={() => navigateTo("informarTipoRecinto")}>
-                    Informar tipo de recinto
+                  <Button className="justify-start bg-[#6351a0] hover:opacity-95" onClick={() => navigateTo("consultarTipoRecinto")}>
+                    Consultar recinto
                   </Button>
                   <Button className="justify-start bg-[#6351a0] hover:opacity-95" onClick={() => navigateTo("consultarIngresosTickets")}>
                     Consultar ingresos tickets
@@ -427,7 +463,7 @@ export default function App() {
             ) : apiResumen ? (
               <Feature01ConsultarResumenDeVentasPage
                 onBack={() => navigateTo("eventoAcciones")}
-                evento={{ id: String(eventoId), nombre: eventoNombre ?? `Evento #${eventoId}` }}
+                evento={{ id: eventoUuid ?? String(eventoId), nombre: eventoNombre ?? `Evento #${eventoId}` }}
                 resumen={mapApiResumenToUI(apiResumen, eventoId)}
               />
             ) : (
@@ -444,7 +480,7 @@ export default function App() {
             ) : apiEstadoIngreso ? (
               <Feature02ConsultarEstadoIngresoPage
                 onBack={() => navigateTo("eventoAcciones")}
-                evento={{ id: String(eventoId), nombre: eventoNombre ?? `Evento #${eventoId}` }}
+                evento={{ id: eventoUuid ?? String(eventoId), nombre: eventoNombre ?? `Evento #${eventoId}` }}
                 estadoIngreso={mapApiEstadoIngresoToUI(apiEstadoIngreso, eventoId)}
               />
             ) : (
@@ -461,7 +497,7 @@ export default function App() {
             ) : apiIngresos ? (
               <Feature04ConsultarIngresosTicketsPage
                 onBack={() => navigateTo("eventoAcciones")}
-                evento={{ id: String(eventoId), nombre: eventoNombre ?? `Evento #${eventoId}` }}
+                evento={{ id: eventoUuid ?? String(eventoId), nombre: eventoNombre ?? `Evento #${eventoId}` }}
                 ingresos={mapApiIngresosToUI(apiIngresos, eventoId)}
               />
             ) : (
@@ -472,8 +508,22 @@ export default function App() {
             )
           )}
 
-          {screen === "informarTipoRecinto" && eventoId && (
-            <FeatureNotImplemented onBack={() => navigateTo("eventoAcciones")} />
+          {screen === "consultarTipoRecinto" && eventoId && (
+            recintoLoading ? (
+              <LoadingSpinner mensaje="Consultando recinto..." />
+            ) : apiRecinto ? (
+              <Feature03InformarTipoDeRecintoPage
+                onBack={() => navigateTo("eventoAcciones")}
+                onConfigureCommission={() => navigateTo("registrarValorComisionRecinto")}
+                evento={{ id: eventoUuid ?? String(eventoId), nombre: eventoNombre ?? `Evento #${eventoId}` }}
+                tipoRecinto={mapApiRecintoToUI(apiRecinto)}
+              />
+            ) : (
+              <ServiceUnavailable
+                error={apiRecintoErrorMsg}
+                onBack={() => navigateTo("eventoAcciones")}
+              />
+            )
           )}
 
           {screen === "determinarTipoLiquidacionFinal" && eventoId && (

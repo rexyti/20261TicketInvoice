@@ -13,7 +13,9 @@ import java.util.stream.Collectors;
 public class EstadoIngresoMapper {
 
     public EstadoIngresoDto toOutput(Long eventoId, String nombreEvento, List<RegistroIngreso> registros) {
-        if (registros == null || registros.isEmpty()) return null;
+        if (registros == null) {
+            registros = List.of();
+        }
 
         List<EstadoIngresoDto.RegistroIngresoDTO> registrosDTO = registros.stream()
                 .map(reg -> new EstadoIngresoDto.RegistroIngresoDTO(
@@ -42,7 +44,7 @@ public class EstadoIngresoMapper {
         for (EstadoIngresoDto.RegistroIngresoDTO dto : output.getRegistros()) {
             ConsultarEstadoIngresoResponse.TicketEstadoIngreso ticket = new ConsultarEstadoIngresoResponse.TicketEstadoIngreso();
             ticket.setIdTicket(dto.getIdTicket());
-            ticket.setCodigoTicket("TKT-" + dto.getIdTicket());
+            ticket.setCodigoTicket(dto.getIdTicket());
             ticket.setEstadoIngreso(dto.getEstadoIngreso());
             ticket.setTipoAcceso(dto.getTipoAcceso());
             tickets.add(ticket);

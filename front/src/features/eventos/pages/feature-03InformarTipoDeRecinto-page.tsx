@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AlertTriangle, CheckCircle2, Lock, RefreshCcw, Search } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Lock, RefreshCcw, Search, Settings } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { BackendNotConnectedModal } from "@/shared/ui/backend-not-connected-modal";
 
@@ -41,11 +41,17 @@ interface EventoTipoRecintoRef {
 
 interface Feature03InformarTipoDeRecintoPageProps {
   onBack: () => void;
+  onConfigureCommission: () => void;
   evento: EventoTipoRecintoRef;
   tipoRecinto: TipoRecintoEventoData;
 }
 
-export function Feature03InformarTipoDeRecintoPage({ onBack, evento, tipoRecinto }: Feature03InformarTipoDeRecintoPageProps) {
+export function Feature03InformarTipoDeRecintoPage({
+  onBack,
+  onConfigureCommission,
+  evento,
+  tipoRecinto,
+}: Feature03InformarTipoDeRecintoPageProps) {
   const tone = getScenarioTone(tipoRecinto.escenario);
   const BadgeIcon = tone.badgeIcon;
   const ActionIcon = tone.actionIcon;
@@ -60,8 +66,8 @@ export function Feature03InformarTipoDeRecintoPage({ onBack, evento, tipoRecinto
 
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-semibold">Consulta tipo de recinto</h1>
-            <p className="mt-2 text-xl text-[#6f6990]">Evento: {evento.nombre} · ID: #{evento.id}</p>
+            <h1 className="text-4xl font-semibold">Consultar recinto</h1>
+            <p className="mt-2 text-xl text-[#6f6990]">Evento: {evento.nombre} - ID: {evento.id}</p>
           </div>
           <span className={`inline-flex h-12 items-center gap-2 rounded-full px-5 text-lg font-semibold ${tone.pageBadgeClass}`}>
             <BadgeIcon className="w-5 h-5" />
@@ -71,7 +77,7 @@ export function Feature03InformarTipoDeRecintoPage({ onBack, evento, tipoRecinto
       </section>
 
       <section className="px-8 md:px-12">
-        <div className="grid grid-cols-1 xl:grid-cols-[1.15fr_1fr] gap-6">
+        <div className="w-full">
           <div className="rounded-xl bg-[#efedf5] p-5 border border-[#d8d4e6]">
             <div className="grid grid-cols-[1fr_auto] gap-3">
               <label className="h-12 flex items-center rounded-full bg-white px-5 gap-3 text-[#6f6990]">
@@ -87,10 +93,10 @@ export function Feature03InformarTipoDeRecintoPage({ onBack, evento, tipoRecinto
             <div className="mt-4 rounded-lg bg-white border border-[#ddd9ea] p-4">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-xs font-semibold uppercase text-[#7a7590]">Recinto #{tipoRecinto.recintoId} · {tipoRecinto.estadoRecinto}</p>
+                  <p className="text-xs font-semibold uppercase text-[#7a7590]">Recinto {tipoRecinto.recintoId} - {tipoRecinto.estadoRecinto}</p>
                   <h2 className="text-4xl font-semibold mt-1">{tipoRecinto.recintoNombre}</h2>
                   <p className="text-lg text-[#6f6990] mt-2">
-                    Ciudad: {tipoRecinto.ciudad} | Última modificación: {tipoRecinto.ultimaModificacion} | Eventos asociados: {tipoRecinto.eventosAsociados}
+                    Ciudad: {tipoRecinto.ciudad} | Ultima modificacion: {tipoRecinto.ultimaModificacion} | Eventos asociados: {tipoRecinto.eventosAsociados}
                   </p>
                 </div>
                 <span className={`inline-flex h-10 items-center gap-2 rounded-full px-4 text-sm font-semibold ${tone.cardBadgeClass}`}>
@@ -101,8 +107,15 @@ export function Feature03InformarTipoDeRecintoPage({ onBack, evento, tipoRecinto
 
               <div className="mt-5 grid grid-cols-3 gap-3">
                 <Metric title={tipoRecinto.escenario === "CambioDeTipoRecintoBloqueado" ? "TIPO ACTUAL" : "TIPO DE RECINTO"} value={tipoRecinto.tipoLabel} />
-                <Metric title={tipoRecinto.escenario === "CambioDeTipoRecintoBloqueado" ? "TASA VIGENTE" : "TASA DE COMISIÓN"} value={tipoRecinto.tasaLabel} />
-                <Metric title={tipoRecinto.escenario === "CambioDeTipoRecintoBloqueado" ? "SOLICITUD" : "APLICACIÓN"} value={tipoRecinto.aplicacionLabel} />
+                <Metric
+                  title={tipoRecinto.escenario === "CambioDeTipoRecintoBloqueado" ? "TASA VIGENTE" : "TASA DE COMISION"}
+                  value={tipoRecinto.tasaLabel}
+                  action={tipoRecinto.tasaLabel.toLowerCase() === "pendiente" ? {
+                    label: "Configurar",
+                    onClick: onConfigureCommission,
+                  } : undefined}
+                />
+                <Metric title={tipoRecinto.escenario === "CambioDeTipoRecintoBloqueado" ? "SOLICITUD" : "APLICACION"} value={tipoRecinto.aplicacionLabel} />
               </div>
 
               <div className={`mt-4 rounded-lg border px-4 py-3 ${tone.alertClass}`}>
@@ -130,18 +143,6 @@ export function Feature03InformarTipoDeRecintoPage({ onBack, evento, tipoRecinto
               </table>
             </div>
           </div>
-
-          <div className="space-y-4">
-            <div className="rounded-xl bg-[#ece9f5] p-5 border border-[#dfdbea]">
-              <p className="text-xs font-semibold uppercase text-[#7a7590]">{tipoRecinto.escenario === "exitoso" ? "ACCEPTANCE SCENARIO" : "EDGE CASE"}</p>
-              <h3 className="mt-2 text-3xl font-semibold">{tipoRecinto.rightTitle}</h3>
-              <p className="mt-3 text-lg text-[#6f6990]">{tipoRecinto.rightDescription}</p>
-            </div>
-            <div className="rounded-xl bg-[#ece9f5] p-5 border border-[#dfdbea]">
-              <p className="text-xs font-semibold uppercase text-[#7a7590]">FUNCTIONAL REQUIREMENTS</p>
-              <p className="mt-3 text-lg text-[#6f6990]">{tipoRecinto.functionalRequirements}</p>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -154,11 +155,21 @@ export function Feature03InformarTipoDeRecintoPage({ onBack, evento, tipoRecinto
   );
 }
 
-function Metric({ title, value }: { title: string; value: string }) {
+function Metric({ title, value, action }: { title: string; value: string; action?: { label: string; onClick: () => void } }) {
   return (
     <div className="rounded-lg bg-[#ece9f5] p-3">
       <p className="text-xs font-semibold uppercase text-[#7a7590]">{title}</p>
       <p className="text-4xl font-semibold mt-1">{value}</p>
+      {action && (
+        <button
+          type="button"
+          onClick={action.onClick}
+          className="mt-3 inline-flex items-center gap-2 rounded-md bg-[#6351a0] px-3 py-2 text-sm font-semibold text-white hover:opacity-95"
+        >
+          <Settings className="w-4 h-4" />
+          {action.label}
+        </button>
+      )}
     </div>
   );
 }
@@ -167,7 +178,7 @@ function getScenarioTone(escenario: TipoRecintoEscenario) {
   if (escenario === "exitoso") {
     return {
       pageBadgeClass: "bg-[#dcebdc] text-[#2f914a]",
-      pageBadgeLabel: "Éxito",
+      pageBadgeLabel: "Consultado",
       badgeIcon: CheckCircle2,
       cardBadgeClass: "bg-[#dcebdc] text-[#2f914a]",
       ctaClass: "bg-[#6351a0] text-white hover:opacity-95",
@@ -178,7 +189,7 @@ function getScenarioTone(escenario: TipoRecintoEscenario) {
   if (escenario === "CambioDeTipoRecintoBloqueado") {
     return {
       pageBadgeClass: "bg-[#f9dede] text-[#c1463a]",
-      pageBadgeLabel: "Acción restringida",
+      pageBadgeLabel: "Accion restringida",
       badgeIcon: Lock,
       cardBadgeClass: "bg-[#f9dede] text-[#c1463a]",
       ctaClass: "bg-[#6351a0] text-white hover:opacity-95",
@@ -188,7 +199,7 @@ function getScenarioTone(escenario: TipoRecintoEscenario) {
   }
   return {
     pageBadgeClass: "bg-[#efdfaa] text-[#3a3318]",
-    pageBadgeLabel: "Advertencia crítica",
+    pageBadgeLabel: "Advertencia",
     badgeIcon: AlertTriangle,
     cardBadgeClass: "bg-[#efdfaa] text-[#3a3318]",
     ctaClass: "bg-[#ece9f5] text-[#4f4474] border border-[#d8d2e8]",

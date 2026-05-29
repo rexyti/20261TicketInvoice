@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS eventos_externos (
     evento_local_id BIGINT PRIMARY KEY REFERENCES eventos(id),
     evento_externo_id VARCHAR(64) NOT NULL UNIQUE,
     recinto_externo_id VARCHAR(64),
+    nombre_recinto VARCHAR(255),
     estado_externo VARCHAR(32),
     tipo VARCHAR(64),
     tipo_recinto VARCHAR(64),
@@ -36,6 +37,25 @@ CREATE TABLE IF NOT EXISTS resumen_ventas_cache (
     valor_total DECIMAL(10,2) NOT NULL DEFAULT 0,
     fecha_sincronizacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (evento_id, condicion_liquidacion)
+);
+
+CREATE TABLE IF NOT EXISTS evento_tickets_externos (
+    evento_id BIGINT NOT NULL REFERENCES eventos(id),
+    ticket_externo_id VARCHAR(64) NOT NULL,
+    condicion_liquidacion VARCHAR(32) NOT NULL,
+    precio DECIMAL(10,2) NOT NULL DEFAULT 0,
+    fecha_sincronizacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (evento_id, ticket_externo_id)
+);
+
+CREATE TABLE IF NOT EXISTS estado_ingreso_cache (
+    evento_id BIGINT NOT NULL REFERENCES eventos(id),
+    ticket_id VARCHAR(64) NOT NULL,
+    estado_ingreso VARCHAR(32) NOT NULL,
+    tipo_acceso VARCHAR(64),
+    fecha_hora_ingreso TIMESTAMP,
+    fecha_sincronizacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (evento_id, ticket_id)
 );
 
 -- Tickets table

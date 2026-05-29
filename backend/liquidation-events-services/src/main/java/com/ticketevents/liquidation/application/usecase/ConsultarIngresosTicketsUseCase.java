@@ -54,7 +54,10 @@ public class ConsultarIngresosTicketsUseCase {
             for (Object[] row : tickets) {
                 EstadoFinanciero estado = (EstadoFinanciero) row[0];
                 java.math.BigDecimal valor = (java.math.BigDecimal) row[1];
-                ingresos.agregarTicket(estado, valor);
+                int cantidad = row.length > 2 && row[2] != null
+                        ? ((Number) row[2]).intValue()
+                        : 1;
+                ingresos.agregarTickets(estado, cantidad, valor);
             }
         } catch (Exception e) {
             log.error("Error al consultar tickets para evento {}: {}", eventoId, e.getMessage());

@@ -1,5 +1,6 @@
 package com.ticketevents.liquidation.infrastructure.adapter.output.external.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import java.util.List;
 
 public class Module1EventSnapshotDto {
@@ -7,6 +8,8 @@ public class Module1EventSnapshotDto {
     private String eventoId;
     private String nombreEvento;
     private String recintoId;
+    @JsonAlias({"recintoNombre"})
+    private String nombreRecinto;
     private String tipoRecinto;
     private List<CondicionDto> condiciones;
     private String timestampGeneracion;
@@ -17,6 +20,8 @@ public class Module1EventSnapshotDto {
     public void setNombreEvento(String nombreEvento) { this.nombreEvento = nombreEvento; }
     public String getRecintoId() { return recintoId; }
     public void setRecintoId(String recintoId) { this.recintoId = recintoId; }
+    public String getNombreRecinto() { return nombreRecinto; }
+    public void setNombreRecinto(String nombreRecinto) { this.nombreRecinto = nombreRecinto; }
     public String getTipoRecinto() { return tipoRecinto; }
     public void setTipoRecinto(String tipoRecinto) { this.tipoRecinto = tipoRecinto; }
     public List<CondicionDto> getCondiciones() { return condiciones; }

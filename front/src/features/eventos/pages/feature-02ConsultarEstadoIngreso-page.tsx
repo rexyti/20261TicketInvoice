@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CheckCircle2, ChevronDown, Download, Search } from "lucide-react";
+import { CheckCircle2, Download, Search } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { BackendNotConnectedModal } from "@/shared/ui/backend-not-connected-modal";
 
@@ -57,16 +57,7 @@ export function Feature02ConsultarEstadoIngresoPage({
               placeholder="Buscar evento por ID o nombre..."
             />
           </label>
-          <div>
-            <p className="text-lg text-[#6f6990] font-semibold mb-2">Origen de datos</p>
-            <button
-              className="w-full h-14 rounded-xl bg-[#ece9f5] px-5 text-xl text-left text-[#211c34] flex items-center justify-between"
-              onClick={() => setShowNotConnectedModal(true)}
-            >
-              Control de accesos
-              <ChevronDown className="w-6 h-6" />
-            </button>
-          </div>
+          <div />
           <Button className="h-14 px-7 rounded-xl bg-[#6351a0] text-[#f2effa] text-xl font-semibold" onClick={() => setShowNotConnectedModal(true)}>
             <Download className="w-6 h-6" />
             Exportar Estado
@@ -81,13 +72,13 @@ export function Feature02ConsultarEstadoIngresoPage({
           </Button>
         </div>
         <p className="text-2xl font-semibold text-[#787296] uppercase">
-          Estado de ingreso de tickets · Control de accesos #{estadoIngreso.controlId}
+          Estado de ingreso de tickets
         </p>
         <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="text-6xl font-semibold">{evento.nombre}</h1>
             <p className="mt-4 text-2xl text-[#6f6990]">
-              ID Evento: #{evento.id} | Fecha evento: {estadoIngreso.fechaEvento} | Estado evento: {estadoIngreso.estadoEvento}
+              ID Evento: {evento.id} | Fecha evento: {estadoIngreso.fechaEvento} | Estado evento: {estadoIngreso.estadoEvento}
             </p>
           </div>
           <div className="h-16 px-6 rounded-full bg-[#2f914a] text-[#eaf8ee] text-2xl font-semibold flex items-center gap-3">
@@ -108,7 +99,7 @@ export function Feature02ConsultarEstadoIngresoPage({
             <Metric
               title="TICKETS VENDIDOS CONSULTADOS"
               value={estadoIngreso.metricas.vendidosConsultados}
-              desc="Total de tickets procesados desde el modulo de operacion de eventos."
+              desc="Total de tickets procesados para el evento."
             />
             <Metric
               title="CHECK-IN REALIZADO"
@@ -150,7 +141,7 @@ export function Feature02ConsultarEstadoIngresoPage({
           <div className="px-6 py-5 border-b border-[#dfdbea]">
             <h3 className="text-3xl font-semibold">Detalle por estado de ingreso</h3>
             <p className="text-xl text-[#6f6990] mt-2">
-              Respuesta consolidada desde el modulo de operacion de eventos y control de accesos
+              Informacion consolidada de ingreso al evento
             </p>
           </div>
           <table className="w-full">
